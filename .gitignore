@@ -13,8 +13,10 @@ data/content.json
 data/content.backup.*.json
 
 # Uploaded images (dashboard)
-uploads/
-backups/*.zip
+uploads/*
+!uploads/.gitkeep
+backups/*
+!backups/.gitkeep
 
 # Logs
 *.log
