@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const { doubleCsrfProtection } = require('../middleware/csrf');
 const { ADMIN_DIR } = require('../lib/config');
 const { loginLimiter, credentialUpdateLimiter } = require('../lib/security');

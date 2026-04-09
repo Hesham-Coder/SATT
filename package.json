@@ -21,7 +21,7 @@
   "dependencies": {
     "@mapbox/node-pre-gyp": "^2.0.3",
     "adm-zip": "^0.5.16",
-    "bcryptjs": "^3.0.3",
+    "bcrypt": "^5.1.1",
     "compression": "^1.8.1",
     "connect-redis": "^8.0.2",
     "cookie-parser": "^1.4.7",
@@ -49,8 +49,5 @@
   },
   "overrides": {
     "tar": ">=7.5.7"
-  },
-  "engines": {
-    "node": ">=18.0.0"
   }
 }
