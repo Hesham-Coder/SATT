@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <!-- Anti-FOUC: synchronously set dir/lang BEFORE any CSS is parsed -->
     <script>(function(){try{var l=localStorage.getItem('lang')||'en';var d=document.documentElement;d.setAttribute('dir',l==='ar'?'rtl':'ltr');d.setAttribute('lang',l==='ar'?'ar':'en');d.classList.add('lang-'+l);}catch(e){}}());</script>
+    <script>(function(){try{var s=parseFloat(localStorage.getItem('site-zoom-level'));if(!isFinite(s))s=1;s=Math.min(1.5,Math.max(0.8,s));var v=String(Math.round((100/s)*100000)/100000);var style=document.createElement('style');style.textContent='body.site-zoom-enabled{overflow-x:hidden;}.site-zoom-frame{width:100%;overflow-x:hidden;}#app-zoom-wrapper{display:block;margin:0 auto;transform-origin:top center;transform:scale('+s+');width:'+v+'%;min-height:'+(s<1?v+'vh':'100vh')+';}';document.head.appendChild(style);}catch(e){}}());</script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Medical Website</title>
     <meta name="description" content="Evidence-based care with a modern, mobile-first experience." />
@@ -53,7 +54,9 @@
     </style>
   </head>
 
-  <body class="bg-slate-50 text-slate-900">
+  <body class="site-zoom-enabled bg-slate-50 text-slate-900">
+    <div class="site-zoom-frame">
+    <div id="app-zoom-wrapper">
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-slate-900 focus:px-3 focus:py-2 focus:text-white"
@@ -892,5 +895,8 @@
         }
       })();
     </script>
+    <script src="/js/zoom.js?v=20260409"></script>
+    </div>
+    </div>
   </body>
 </html>
