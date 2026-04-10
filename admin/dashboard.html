@@ -913,17 +913,41 @@
                 if (!c.contact || typeof c.contact !== 'object') c.contact = {};
                 if (!c.siteInfo || typeof c.siteInfo !== 'object') c.siteInfo = {};
                 if (!c.siteInfo.logoName) c.siteInfo.logoName = c.siteInfo.title || 'Comprehensive Cancer Center';
-                // Helper to extract string from bilingual object or return as-is
+                // Helper to extract a plain phone string from either a string or a
+                // bilingual object {en, ar} (legacy format stored by older editor versions).
+                // Also strips Unicode bidi/invisible control characters injected by RTL helpers.
                 function getPhoneString(val) {
-                    if (!val) return '+201120800011';
-                    if (typeof val === 'string') return val;
-                    if (typeof val === 'object' && val.en) return val.en;
-                    if (typeof val === 'object' && val.ar) return val.ar;
-                    return String(val).replace(/\[object Object\]/g, '+201120800011');
+                    var DEFAULT_PHONE = '+201120800011';
+                    var s;
+                    if (!val) return DEFAULT_PHONE;
+                    if (typeof val === 'object' && !Array.isArray(val)) {
+                        s = (val.en || val.ar || DEFAULT_PHONE);
+                    } else {
+                        s = String(val);
+                    }
+                    // Strip bidi / invisible Unicode control characters
+                    s = s.replace(/[\u200B-\u200F\u202A-\u202F\u2060\uFEFF]/g, '').trim();
+                    return s || DEFAULT_PHONE;
                 }
-                if (!c.contactSettings.primaryNavbarNumber) c.contactSettings.primaryNavbarNumber = getPhoneString(c.contact.phone) || '+201120800011';
-                if (!c.contactSettings.immediateSupportNumber) c.contactSettings.immediateSupportNumber = getPhoneString(c.contact.emergencyPhone) || c.contactSettings.primaryNavbarNumber;
-                if (!c.contactSettings.footerGeneralContact) c.contactSettings.footerGeneralContact = getPhoneString(c.contact.phone) || c.contactSettings.primaryNavbarNumber;
+                // Normalise each phone field: if it is a bilingual object or contains
+                // invisible control chars, replace it with a clean plain string.
+                function normalisePhone(val, fallback) {
+                    if (typeof val === 'string') {
+                        var cleaned = val.replace(/[\u200B-\u200F\u202A-\u202F\u2060\uFEFF]/g, '').trim();
+                        return cleaned || fallback;
+                    }
+                    return getPhoneString(val) || fallback;
+                }
+                c.contactSettings.primaryNavbarNumber = normalisePhone(c.contactSettings.primaryNavbarNumber,
+                    getPhoneString(c.contact.phone));
+                c.contactSettings.immediateSupportNumber = normalisePhone(c.contactSettings.immediateSupportNumber,
+                    getPhoneString(c.contact.emergencyPhone) || c.contactSettings.primaryNavbarNumber);
+                c.contactSettings.footerGeneralContact = normalisePhone(c.contactSettings.footerGeneralContact,
+                    getPhoneString(c.contact.phone) || c.contactSettings.primaryNavbarNumber);
+                if (!c.contactSettings.whatsappSupportNumber || typeof c.contactSettings.whatsappSupportNumber !== 'string') {
+                    c.contactSettings.whatsappSupportNumber = normalisePhone(c.contactSettings.whatsappSupportNumber,
+                        c.contactSettings.primaryNavbarNumber);
+                }
                 if (!c.contactSettings.whatsappWelcomeMessage) c.contactSettings.whatsappWelcomeMessage = 'Hello, I would like to speak with your support team.';
                 c.contact.phone = c.contactSettings.primaryNavbarNumber;
                 c.contact.emergencyPhone = c.contactSettings.immediateSupportNumber;
