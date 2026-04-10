@@ -348,7 +348,7 @@ class AttentionGuidedNavigation {
 
     document.body.classList.add('debug-focus-zone');
 
-    console.log('🔍 Debug Mode Enabled - Focus Zone Indicator Visible');
+    // Debug mode enabled - focus zone indicator visible
   }
 
   /**
@@ -363,23 +363,14 @@ class AttentionGuidedNavigation {
    * Log initialization status
    */
   logInitialization() {
-    console.log('%c✓ Attention-Guided Navigation System Initialized', 'color: #10b981; font-weight: bold;');
-    console.log('%cConfiguration:', 'color: #3b82f6; font-weight: bold;', {
-      focusZoneMargin: this.config.focusZoneMargin,
-      observerThreshold: this.config.observerThreshold,
-      debugMode: this.config.debugMode,
-      reducedMotionEnabled: this.state.reducedMotionEnabled,
-      currentLanguage: this.state.currentLanguage
-    });
+    // Attention-guided nav initialized (production logging disabled)
   }
 
   /**
    * Log accessibility status
    */
   logAccessibilityStatus() {
-    console.log('%cAccessibility Status Updated:', 'color: #f59e0b; font-weight: bold;', {
-      reducedMotionEnabled: this.state.reducedMotionEnabled
-    });
+    // Accessibility status updated (production logging disabled)
   }
 
   /**
@@ -425,7 +416,7 @@ class AttentionGuidedNavigation {
     if (this.state.observer) {
       this.state.observer.disconnect();
     }
-    console.log('✓ Attention-Guided Navigation System Destroyed');
+    // Attention-guided navigation system destroyed
   }
 }
 

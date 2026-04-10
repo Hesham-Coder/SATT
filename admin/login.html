@@ -6,6 +6,18 @@
     <script>(function(){try{var l=localStorage.getItem('app-lang-preference')||localStorage.getItem('lang')||'en';var d=document.documentElement;d.setAttribute('dir',l==='ar'?'rtl':'ltr');d.setAttribute('lang',l==='ar'?'ar':'en');d.classList.add('lang-'+l);}catch(e){}}());</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
+    <link rel="stylesheet" href="/assets/admin-themes.css">
+
+    <script>
+      // Apply admin theme before first paint
+      (function () {
+        try {
+          var theme = localStorage.getItem("admin-theme") || "dark";
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {}
+      })();
+    </script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -124,5 +136,6 @@
             }
         });
     </script>
+    <script src="/assets/theme-manager.js"></script>
 </body>
 </html>

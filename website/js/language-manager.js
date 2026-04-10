@@ -372,13 +372,7 @@ class LanguageManager {
    * Log initialization status
    */
   logInitialization() {
-    console.log('%c✓ Language Manager Initialized', 'color: #10b981; font-weight: bold;');
-    console.log('%cConfiguration:', 'color: #3b82f6; font-weight: bold;', {
-      currentLanguage: this.state.currentLanguage,
-      supportedLanguages: this.config.supportedLanguages,
-      defaultLanguage: this.config.defaultLanguage,
-      autoDetect: this.config.enableAutoDetect
-    });
+    // Language manager initialized (production logging disabled)
   }
 
   /**
@@ -387,7 +381,7 @@ class LanguageManager {
   destroy() {
     this.state.listeners.clear();
     this.state.contentCache.clear();
-    console.log('✓ Language Manager Destroyed');
+    // Language manager destroyed
   }
 }
 

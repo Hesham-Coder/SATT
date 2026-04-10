@@ -8,7 +8,7 @@
   }
 
   function formatDate(iso) {
-    var d = new Date(iso);
+    const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return '';
     return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
@@ -18,21 +18,21 @@
   }
 
   function toEmbedUrl(url) {
-    var rawUrl = String(url || '').trim();
+    const rawUrl = String(url || '').trim();
     if (!rawUrl) return '';
     if (/youtube\.com\/watch\?v=/i.test(rawUrl)) {
-      var videoId = (rawUrl.split('v=')[1] || '').split('&')[0];
+      const videoId = (rawUrl.split('v=')[1] || '').split('&')[0];
       return videoId ? 'https://www.youtube.com/embed/' + videoId : '';
     }
     if (/youtu\.be\//i.test(rawUrl)) {
-      var shortId = rawUrl.split('youtu.be/')[1].split(/[?&]/)[0];
+      const shortId = rawUrl.split('youtu.be/')[1].split(/[?&]/)[0];
       return shortId ? 'https://www.youtube.com/embed/' + shortId : '';
     }
     if (/facebook\.com\/.*\/videos\//i.test(rawUrl) || /facebook\.com\/reel\//i.test(rawUrl)) {
       return 'https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(rawUrl) + '&show_text=false';
     }
     if (/vimeo\.com\/\d+/i.test(rawUrl)) {
-      var vmId = (rawUrl.match(/vimeo\.com\/(\d+)/i) || [])[1];
+      const vmId = (rawUrl.match(/vimeo\.com\/(\d+)/i) || [])[1];
       return vmId ? 'https://player.vimeo.com/video/' + vmId : '';
     }
     if (/youtube\.com\/embed\//i.test(rawUrl) || /youtube-nocookie\.com\/embed\//i.test(rawUrl) || /player\.vimeo\.com\/video\//i.test(rawUrl) || /facebook\.com\/plugins\/video\.php/i.test(rawUrl)) {
@@ -42,7 +42,7 @@
   }
 
   function renderCard(post) {
-    var media = post.videoUrl
+    const media = post.videoUrl
       ? (isDirectVideoUrl(post.videoUrl)
         ? '<video src="' + escapeHtml(post.videoUrl) + '" class="w-full h-48 object-cover bg-black" muted playsinline loop preload="metadata"></video>'
         : (toEmbedUrl(post.videoUrl)
@@ -51,7 +51,7 @@
       : post.featuredImage
         ? '<img src="' + escapeHtml(post.featuredImage) + '" alt="' + escapeHtml(post.title) + '" class="w-full h-48 object-cover">'
         : '<div class="w-full h-48 bg-slate-200"></div>';
-    var date = formatDate(post.createdAt);
+    const date = formatDate(post.createdAt);
     return '<article class="rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300">' +
       media +
       '<div class="p-5">' +
@@ -64,7 +64,7 @@
 
   function renderFeatured(post) {
     if (!post) return '';
-    var media = post.videoUrl
+    const media = post.videoUrl
       ? (isDirectVideoUrl(post.videoUrl)
         ? '<video src="' + escapeHtml(post.videoUrl) + '" class="absolute inset-0 w-full h-full object-cover bg-black" muted autoplay playsinline loop preload="metadata"></video>'
         : (toEmbedUrl(post.videoUrl)
@@ -85,7 +85,7 @@
   }
 
   function createSectionController(config) {
-    var state = {
+    const state = {
       page: 1,
       limit: 6,
       hasNext: false,
@@ -95,10 +95,10 @@
       loadedSlugs: new Set()
     };
 
-    var grid = document.getElementById(config.gridId);
-    var status = document.getElementById(config.stateId);
-    var featured = document.getElementById(config.featuredId);
-    var loadMore = document.getElementById(config.loadMoreId);
+    const grid = document.getElementById(config.gridId);
+    const status = document.getElementById(config.stateId);
+    const featured = document.getElementById(config.featuredId);
+    const loadMore = document.getElementById(config.loadMoreId);
     if (!grid || !status || !featured || !loadMore) return null;
 
     function setState(text) {
@@ -139,14 +139,14 @@
         state.loadedSlugs = new Set();
       }
       setState('Loading...');
-      var listUrl = '/api/posts?type=' + encodeURIComponent(config.type) + '&page=' + state.page + '&limit=' + state.limit + (reset ? '&includeFeatured=1' : '');
+      const listUrl = '/api/posts?type=' + encodeURIComponent(config.type) + '&page=' + state.page + '&limit=' + state.limit + (reset ? '&includeFeatured=1' : '');
       return request(listUrl).then(function (listRes) {
         if (reset) {
-          var featuredPost = listRes.featuredItem || null;
+          const featuredPost = listRes.featuredItem || null;
           featured.innerHTML = renderFeatured(featuredPost);
           state.featuredSlug = featuredPost ? featuredPost.slug : '';
         }
-        var nextItems = (listRes.items || []).filter(function (item) {
+        const nextItems = (listRes.items || []).filter(function (item) {
           if (!item || !item.slug) return false;
           if (item.slug === state.featuredSlug) return false;
           if (state.loadedSlugs.has(item.slug)) return false;
@@ -179,7 +179,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    var sections = [
+    const sections = [
       createSectionController({
         type: 'news',
         featuredId: 'newsFeatured',

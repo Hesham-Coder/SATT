@@ -8,6 +8,18 @@
     <title>Content Editor – Admin Dashboard</title>
     <script src="/js/Sortable.min.js"></script>
     <link rel="stylesheet" href="/rtl-styles.css">
+    <link rel="stylesheet" href="/assets/admin-themes.css">
+
+    <script>
+      // Apply admin theme before first paint to prevent flash
+      (function () {
+        try {
+          var theme = localStorage.getItem("admin-theme") || "dark";
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {}
+      })();
+    </script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -30,6 +42,91 @@
         }
         .header h1 { font-size: 20px; font-weight: 700; }
         .header-actions { display: flex; align-items: center; gap: 12px; }
+        .zoom-control {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 260px;
+            padding: 10px 12px;
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.12);
+        }
+        .zoom-control-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .zoom-control-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.92);
+            white-space: nowrap;
+        }
+        .zoom-control-slider {
+            display: grid;
+            grid-template-columns: 30px minmax(120px, 1fr) 30px;
+            align-items: center;
+            gap: 8px;
+        }
+        .zoom-control-step,
+        .zoom-control input[type="range"] {
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 999px;
+            background: rgba(255,255,255,0.18);
+            color: white;
+            font: inherit;
+        }
+        .zoom-control-step {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .zoom-control-step:hover {
+            background: rgba(255,255,255,0.28);
+        }
+        .zoom-control input[type="range"] {
+            width: 100%;
+            padding: 0;
+            accent-color: #ffffff;
+        }
+        .zoom-presets {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .zoom-preset {
+            border: 1px solid rgba(255,255,255,0.24);
+            border-radius: 999px;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.92);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+        }
+        .zoom-preset:hover {
+            background: rgba(255,255,255,0.22);
+            border-color: rgba(255,255,255,0.42);
+        }
+        .zoom-preset.active {
+            background: rgba(255,255,255,0.32);
+            border-color: rgba(255,255,255,0.58);
+            transform: translateY(-1px);
+        }
+        .zoom-value {
+            min-width: 48px;
+            text-align: right;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.95);
+        }
         .header-actions a {
             color: rgba(255,255,255,0.95);
             text-decoration: none;
@@ -260,6 +357,8 @@
         @media (max-width: 560px) {
             .header h1 { font-size: 18px; }
             .header-actions a, .header-actions .logout { padding: 8px 10px; font-size: 13px; }
+            .zoom-control { width: 100%; min-width: 0; }
+            .zoom-control-slider { grid-template-columns: 28px minmax(0, 1fr) 28px; }
             .card h2 { font-size: 16px; }
             .form-group input, .form-group textarea { font-size: 16px; } /* prevent iOS zoom on focus */
             .toast { right: 12px; left: 12px; bottom: 12px; }
@@ -320,6 +419,23 @@
                 <a href="/" target="_blank">View live</a>
                 <a href="/?preview=1" target="_blank">Preview draft</a>
                 <a href="/content.html">Content / News</a>
+                <div class="zoom-control" aria-label="Website zoom control">
+                    <div class="zoom-control-header">
+                        <span class="zoom-control-label">Zoom</span>
+                        <span class="zoom-value" id="zoomValue">100%</span>
+                    </div>
+                    <div class="zoom-control-slider">
+                        <button type="button" class="zoom-control-step" id="zoomOutBtn" aria-label="Zoom out">−</button>
+                        <input id="zoomSlider" type="range" min="80" max="150" step="5" value="100" aria-label="Website zoom level">
+                        <button type="button" class="zoom-control-step" id="zoomInBtn" aria-label="Zoom in">+</button>
+                    </div>
+                    <div class="zoom-presets" id="zoomPresets" role="group" aria-label="Preset zoom levels">
+                        <button type="button" class="zoom-preset" data-zoom-preset="0.9">90%</button>
+                        <button type="button" class="zoom-preset" data-zoom-preset="1">100%</button>
+                        <button type="button" class="zoom-preset" data-zoom-preset="1.1">110%</button>
+                        <button type="button" class="zoom-preset" data-zoom-preset="1.25">125%</button>
+                    </div>
+                </div>
                 <button type="button" class="logout" id="publishBtn">Publish changes</button>
                 <span id="headerUsername">—</span>
                 <div class="lang-switcher" id="langSwitcher"></div>
@@ -2461,6 +2577,111 @@
 
             document.getElementById('logoutBtn').addEventListener('click', logout);
 
+            var ZOOM_STORAGE_KEY = 'site-zoom-level';
+            var ZOOM_MIN = 0.8;
+            var ZOOM_MAX = 1.5;
+
+            function normalizeZoomValue(value) {
+                var parsed = Number(value);
+                if (!isFinite(parsed)) return 1;
+                if (parsed < ZOOM_MIN) return ZOOM_MIN;
+                if (parsed > ZOOM_MAX) return ZOOM_MAX;
+                return Math.round(parsed * 100) / 100;
+            }
+
+            function readStoredZoom() {
+                try {
+                    return normalizeZoomValue(localStorage.getItem(ZOOM_STORAGE_KEY));
+                } catch (error) {
+                    return 1;
+                }
+            }
+
+            function writeStoredZoom(value) {
+                var normalized = normalizeZoomValue(value);
+                try {
+                    localStorage.setItem(ZOOM_STORAGE_KEY, String(normalized));
+                } catch (error) {
+                    return normalized;
+                }
+                window.dispatchEvent(new CustomEvent('site-zoom-dashboard-change', { detail: { scale: normalized } }));
+                return normalized;
+            }
+
+            function setupZoomControl() {
+                var rangeInput = document.getElementById('zoomSlider');
+                var valueLabel = document.getElementById('zoomValue');
+                var presetsWrap = document.getElementById('zoomPresets');
+                var zoomOutBtn = document.getElementById('zoomOutBtn');
+                var zoomInBtn = document.getElementById('zoomInBtn');
+                var rangeTimer = null;
+
+                if (!rangeInput || !valueLabel || !presetsWrap || !zoomOutBtn || !zoomInBtn) return;
+
+                var presetButtons = Array.prototype.slice.call(presetsWrap.querySelectorAll('[data-zoom-preset]'));
+
+                function setZoomFromRange(percent, immediate) {
+                    var clampedPercent = Math.max(80, Math.min(150, Math.round(percent / 5) * 5));
+                    rangeInput.value = String(clampedPercent);
+                    valueLabel.textContent = clampedPercent + '%';
+
+                    window.clearTimeout(rangeTimer);
+                    if (immediate) {
+                        writeStoredZoom(clampedPercent / 100);
+                        syncZoomUi();
+                        return;
+                    }
+
+                    rangeTimer = window.setTimeout(function() {
+                        writeStoredZoom(clampedPercent / 100);
+                        syncZoomUi();
+                    }, 120);
+                }
+
+                function syncZoomUi() {
+                    var current = readStoredZoom();
+                    var currentText = String(current);
+                    var percentage = String(Math.round(current * 100));
+
+                    rangeInput.value = percentage;
+                    valueLabel.textContent = percentage + '%';
+                    presetButtons.forEach(function(button) {
+                        button.classList.toggle('active', button.getAttribute('data-zoom-preset') === currentText);
+                        button.setAttribute('aria-pressed', button.classList.contains('active') ? 'true' : 'false');
+                    });
+                }
+
+                rangeInput.addEventListener('input', function() {
+                    setZoomFromRange(Number(rangeInput.value), false);
+                });
+
+                rangeInput.addEventListener('change', function() {
+                    setZoomFromRange(Number(rangeInput.value), true);
+                });
+
+                presetButtons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        setZoomFromRange(Number(button.getAttribute('data-zoom-preset')) * 100, true);
+                    });
+                });
+
+                zoomOutBtn.addEventListener('click', function() {
+                    setZoomFromRange(Number(rangeInput.value) - 5, true);
+                });
+
+                zoomInBtn.addEventListener('click', function() {
+                    setZoomFromRange(Number(rangeInput.value) + 5, true);
+                });
+
+                window.addEventListener('storage', function(event) {
+                    if (event.key && event.key !== ZOOM_STORAGE_KEY) return;
+                    syncZoomUi();
+                });
+                window.addEventListener('site-zoom-dashboard-change', syncZoomUi);
+
+                syncZoomUi();
+            }
+
             function publishChanges() {
                 if (!window.confirm('Publish the current draft content to the live website?')) return;
                 setSaveStatus('Publishing…', 'saving');
@@ -3090,6 +3311,8 @@
                 loadBackupsList();
             }
 
+            setupZoomControl();
+
             checkAuth().then(function(ok) {
                 if (!ok) return;
                 setupAccountSection();
@@ -3151,5 +3374,6 @@
             }
         });
     </script>
+    <script src="/assets/theme-manager.js"></script>
 </body>
 </html>

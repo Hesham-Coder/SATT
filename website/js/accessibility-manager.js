@@ -501,13 +501,7 @@ class AccessibilityManager {
    * Log initialization status
    */
   logInitialization() {
-    console.log('%c✓ Accessibility Manager Initialized', 'color: #10b981; font-weight: bold;');
-    console.log('%cPreferences:', 'color: #3b82f6; font-weight: bold;', this.getPreferences());
-    console.log('%cKeyboard Shortcuts:', 'color: #f59e0b; font-weight: bold;', {
-      'Alt + S': 'Skip to main content',
-      'Alt + H': 'Toggle focus zone indicator',
-      'Alt + L': 'Toggle language'
-    });
+    // Accessibility manager initialized (production logging disabled)
   }
 
   /**
@@ -516,7 +510,7 @@ class AccessibilityManager {
   destroy() {
     this.state.listeners.clear();
     this.state.mediaQueries.clear();
-    console.log('✓ Accessibility Manager Destroyed');
+    // Accessibility manager destroyed
   }
 }
 

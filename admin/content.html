@@ -1,9 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Content - Admin Dashboard</title>
+  <link rel="stylesheet" href="/assets/admin-themes.css">
+
+  <script>
+    // Apply admin theme before first paint
+    (function () {
+      try {
+        var theme = localStorage.getItem("admin-theme") || "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
+
   <style>
     :root {
       --brand-blue-dark: #004A8D;
@@ -826,6 +838,7 @@
     })();
   </script>
   
+  <script src="/assets/theme-manager.js"></script>
   <!-- Facebook SDK for embedded video preview -->
   <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0" onload="if(window.FB && document.getElementById('postVideoEmbedPreview')) FB.XFBML.parse();"></script>
 </body>

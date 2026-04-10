@@ -92,6 +92,14 @@ if (!SESSION_SECRET || SESSION_SECRET.length < 32) {
   process.exit(1);
 }
 
+if (IS_PROD && !process.env.CSRF_SECRET) {
+  logger.error('CSRF_SECRET is not set. Set CSRF_SECRET in environment variables for production.');
+  process.exit(1);
+}
+if (!IS_PROD && !process.env.CSRF_SECRET) {
+  logger.warn('CSRF_SECRET is not set; using insecure development default. Set CSRF_SECRET before deploying.');
+}
+
 async function configureSession() {
   try {
     const redisClient = createRedisConnection();

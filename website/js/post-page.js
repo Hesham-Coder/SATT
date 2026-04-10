@@ -8,18 +8,18 @@
   }
 
   function setMetaTag(selector, value) {
-    var node = document.querySelector(selector);
+    const node = document.querySelector(selector);
     if (node) node.setAttribute('content', value || '');
   }
 
   function formatDate(iso) {
-    var date = new Date(iso);
+    const date = new Date(iso);
     if (Number.isNaN(date.getTime())) return '';
     return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
   function getSlug() {
-    var parts = window.location.pathname.split('/').filter(Boolean);
+    const parts = window.location.pathname.split('/').filter(Boolean);
     return parts.length ? decodeURIComponent(parts[parts.length - 1]) : '';
   }
 
@@ -34,16 +34,16 @@
   }
 
   function toEmbedUrl(url) {
-    var rawUrl = String(url || '').trim();
+    const rawUrl = String(url || '').trim();
     if (!rawUrl) return '';
     // YouTube: watch?v= format
     if (/youtube\.com\/watch\?v=/i.test(rawUrl)) {
-      var videoId = (rawUrl.split('v=')[1] || '').split('&')[0];
+      const videoId = (rawUrl.split('v=')[1] || '').split('&')[0];
       return videoId ? 'https://www.youtube.com/embed/' + videoId : '';
     }
     // YouTube: short URL format
     if (/youtu\.be\//i.test(rawUrl)) {
-      var shortId = rawUrl.split('youtu.be/')[1].split(/[?&]/)[0];
+      const shortId = rawUrl.split('youtu.be/')[1].split(/[?&]/)[0];
       return shortId ? 'https://www.youtube.com/embed/' + shortId : '';
     }
     // Facebook: any video page or reel
@@ -52,7 +52,7 @@
     }
     // Vimeo: numeric video ID
     if (/vimeo\.com\/\d+/i.test(rawUrl)) {
-      var vmId = (rawUrl.match(/vimeo\.com\/(\d+)/i) || [])[1];
+      const vmId = (rawUrl.match(/vimeo\.com\/(\d+)/i) || [])[1];
       return vmId ? 'https://player.vimeo.com/video/' + vmId : '';
     }
     // Already embed URLs - pass through
@@ -63,23 +63,23 @@
   }
 
   function render(post) {
-    var loading = document.getElementById('loadingState');
-    var article = document.getElementById('postArticle');
-    var meta = document.getElementById('postMeta');
-    var title = document.getElementById('postTitle');
-    var excerpt = document.getElementById('postExcerpt');
-    var image = document.getElementById('postImage');
-    var video = document.getElementById('postVideo');
-    var videoEmbed = document.getElementById('postVideoEmbed');
-    var content = document.getElementById('postContent');
-    var tags = document.getElementById('postTags');
-    var typeLink = document.getElementById('postTypeLink');
+    const loading = document.getElementById('loadingState');
+    const article = document.getElementById('postArticle');
+    const meta = document.getElementById('postMeta');
+    const title = document.getElementById('postTitle');
+    const excerpt = document.getElementById('postExcerpt');
+    const image = document.getElementById('postImage');
+    const video = document.getElementById('postVideo');
+    const videoEmbed = document.getElementById('postVideoEmbed');
+    const content = document.getElementById('postContent');
+    const tags = document.getElementById('postTags');
+    const typeLink = document.getElementById('postTypeLink');
 
     loading.classList.add('hidden');
     article.classList.remove('hidden');
 
-    var typeLabel = labelType(post.type);
-    var dateLabel = formatDate(post.createdAt);
+    const typeLabel = labelType(post.type);
+    const dateLabel = formatDate(post.createdAt);
     meta.textContent = typeLabel + (dateLabel ? ' • ' + dateLabel : '') + (post.author ? ' • ' + post.author : '');
     title.textContent = post.title || '';
     excerpt.textContent = post.excerpt || '';
@@ -92,7 +92,7 @@
         videoEmbed.classList.add('hidden');
         videoEmbed.removeAttribute('src');
       } else {
-        var embedUrl = toEmbedUrl(post.videoUrl);
+        const embedUrl = toEmbedUrl(post.videoUrl);
         if (embedUrl) {
           videoEmbed.src = embedUrl;
           videoEmbed.classList.remove('hidden');
@@ -118,8 +118,8 @@
     typeLink.textContent = typeLabel;
     typeLink.href = '/#' + (post.type === 'article' ? 'articles' : post.type === 'update' ? 'updates' : 'news');
 
-    var metaTitle = post.seoTitle || post.title || 'Article';
-    var metaDescription = post.seoDescription || post.excerpt || '';
+    const metaTitle = post.seoTitle || post.title || 'Article';
+    const metaDescription = post.seoDescription || post.excerpt || '';
     document.title = metaTitle;
     setMetaTag('meta[name="description"]', metaDescription);
     setMetaTag('meta[property="og:title"]', metaTitle);
@@ -130,7 +130,7 @@
       setMetaTag('meta[property="og:image"]', post.featuredImage);
       setMetaTag('meta[name="twitter:image"]', post.featuredImage);
     }
-    var canonical = document.querySelector('link[rel="canonical"]');
+    let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
       canonical = document.createElement('link');
       canonical.setAttribute('rel', 'canonical');
@@ -152,21 +152,21 @@
 
   function showError(message) {
     document.getElementById('loadingState').classList.add('hidden');
-    var box = document.getElementById('errorState');
+    const box = document.getElementById('errorState');
     box.classList.remove('hidden');
     box.textContent = message || 'Failed to load this post.';
   }
 
-  var slug = getSlug();
+  const slug = getSlug();
   if (!slug) {
     showError('Post slug is missing.');
     return;
   }
 
-  var params = new URLSearchParams(window.location.search);
-  var isPreview = params.get('preview') === '1';
-  var previewId = params.get('id') || '';
-  var endpoint = isPreview && previewId
+  const params = new URLSearchParams(window.location.search);
+  const isPreview = params.get('preview') === '1';
+  const previewId = params.get('id') || '';
+  const endpoint = isPreview && previewId
     ? '/api/admin/posts/id/' + encodeURIComponent(previewId)
     : '/api/posts/' + encodeURIComponent(slug);
 

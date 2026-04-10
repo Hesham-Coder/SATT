@@ -443,7 +443,7 @@ router.post('/api/admin/backup', requireAuth, doubleCsrfProtection(), async (req
 });
 
 // List backups endpoint
-router.get('/api/admin/backups', requireAuth, doubleCsrfProtection(), async (req, res) => {
+router.get('/api/admin/backups', requireAuth, async (req, res) => {
   try {
     const backups = await listBackups();
     

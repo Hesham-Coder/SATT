@@ -327,6 +327,14 @@ router.get('/sitemap.xml', async (req, res) => {
   }
 });
 
+router.options('/api/public/content', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept-Encoding');
+  res.setHeader('Access-Control-Max-Age', '86400');
+  res.sendStatus(204);
+});
+
 router.get('/api/public/content', async (req, res) => {
   try {
     const snapshot = await getPublishedContentSnapshot();
@@ -339,8 +347,8 @@ router.get('/api/public/content', async (req, res) => {
       return res.status(304).end();
     }
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept-Encoding');
     res.json(snapshot.data);
   } catch (error) {
     logger.error('Error reading content', { error: error.message });
