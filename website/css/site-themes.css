@@ -1,0 +1,272 @@
+/* ==================================================
+   WEBSITE THEME SYSTEM - CSS Variables & Styles
+   Supports: auto, dark, light, ocean, sunset themes
+   ================================================== */
+
+:root {
+  /* DEFAULT: Dark theme (fallback) */
+  --site-bg: #0f1419;
+  --site-bg-secondary: #1a1f28;
+  --site-bg-tertiary: #242a35;
+  --site-text: #e8eaed;
+  --site-text-secondary: #b0b4b8;
+  --site-text-tertiary: #808488;
+  --site-border: #2d333a;
+  --site-primary: #4a9eff;
+  --site-primary-hover: #3d8fd6;
+  --site-primary-active: #2a7fb8;
+  --site-success: #10b981;
+  --site-warning: #f59e0b;
+  --site-error: #ef4444;
+  --site-input-bg: #1a1f28;
+  --site-input-border: #3a4148;
+  --site-shadow: rgba(0, 0, 0, 0.3);
+  --site-overlay: rgba(0, 0, 0, 0.5);
+}
+
+html[data-site-theme="light"] {
+  --site-bg: #ffffff;
+  --site-bg-secondary: #f5f5f5;
+  --site-bg-tertiary: #eeeeee;
+  --site-text: #1a1a1a;
+  --site-text-secondary: #424242;
+  --site-text-tertiary: #757575;
+  --site-border: #e0e0e0;
+  --site-primary: #0066cc;
+  --site-primary-hover: #0052a3;
+  --site-primary-active: #003380;
+  --site-success: #059669;
+  --site-warning: #d97706;
+  --site-error: #dc2626;
+  --site-input-bg: #f5f5f5;
+  --site-input-border: #d0d0d0;
+  --site-shadow: rgba(0, 0, 0, 0.1);
+  --site-overlay: rgba(0, 0, 0, 0.3);
+}
+
+html[data-site-theme="ocean"] {
+  --site-bg: #0d1b2a;
+  --site-bg-secondary: #1b263b;
+  --site-bg-tertiary: #2d4059;
+  --site-text: #e0f4ff;
+  --site-text-secondary: #a8d5ff;
+  --site-text-tertiary: #7ab5ff;
+  --site-border: #3d5a80;
+  --site-primary: #00d9ff;
+  --site-primary-hover: #00b3d9;
+  --site-primary-active: #0090b3;
+  --site-success: #10b981;
+  --site-warning: #f59e0b;
+  --site-error: #ff6b6b;
+  --site-input-bg: #1b263b;
+  --site-input-border: #3d5a80;
+  --site-shadow: rgba(0, 80, 150, 0.4);
+  --site-overlay: rgba(0, 50, 100, 0.6);
+}
+
+html[data-site-theme="sunset"] {
+  --site-bg: #1a0f2e;
+  --site-bg-secondary: #2d1b47;
+  --site-bg-tertiary: #3d2762;
+  --site-text: #ffd9e8;
+  --site-text-secondary: #ffb3d9;
+  --site-text-tertiary: #ff8db3;
+  --site-border: #5a3d8a;
+  --site-primary: #ff6b9d;
+  --site-primary-hover: #ff4d85;
+  --site-primary-active: #ff2e6d;
+  --site-success: #10b981;
+  --site-warning: #fbbf24;
+  --site-error: #ff6b6b;
+  --site-input-bg: #2d1b47;
+  --site-input-border: #5a3d8a;
+  --site-shadow: rgba(255, 50, 150, 0.3);
+  --site-overlay: rgba(150, 50, 100, 0.5);
+}
+
+/* Global theme transitions */
+body, body * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Apply theme to body */
+body {
+  background-color: var(--site-bg);
+  color: var(--site-text);
+}
+
+/* Header/nav theming */
+header, nav, .header, .navbar {
+  background-color: var(--site-bg-secondary);
+  color: var(--site-text);
+  border-bottom-color: var(--site-border);
+}
+
+/* Links */
+a {
+  color: var(--site-primary);
+}
+
+a:hover {
+  color: var(--site-primary-hover);
+}
+
+/* Section backgrounds */
+section, article, .section, .card, .content-block {
+  background-color: var(--site-bg-secondary);
+  border-color: var(--site-border);
+  color: var(--site-text);
+}
+
+/* Input elements */
+input, textarea, select {
+  background-color: var(--site-input-bg);
+  color: var(--site-text);
+  border-color: var(--site-input-border);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--site-text-tertiary);
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--site-primary);
+  outline: none;
+}
+
+/* Buttons */
+button, .btn {
+  background-color: var(--site-primary);
+  color: white;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+button:hover, .btn:hover {
+  background-color: var(--site-primary-hover);
+}
+
+button:active, .btn:active {
+  background-color: var(--site-primary-active);
+}
+
+/* Secondary buttons */
+.btn-secondary {
+  background-color: var(--site-bg-tertiary);
+  color: var(--site-text);
+  border: 1px solid var(--site-border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--site-border);
+  color: var(--site-text);
+}
+
+/* Text elements */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--site-text);
+}
+
+p {
+  color: var(--site-text-secondary);
+}
+
+.text-muted, .secondary-text {
+  color: var(--site-text-tertiary);
+}
+
+/* Lists */
+ul, ol {
+  color: var(--site-text-secondary);
+}
+
+li {
+  color: inherit;
+}
+
+/* Code blocks */
+code, pre {
+  background-color: var(--site-bg-tertiary);
+  color: var(--site-primary);
+  border-color: var(--site-border);
+}
+
+/* Borders and dividers */
+hr, .divider {
+  border-color: var(--site-border);
+}
+
+/* Shadows */
+.shadow, [class*="shadow"] {
+  box-shadow: 0 4px 12px var(--site-shadow);
+}
+
+/* === MOBILE THEME SWITCHER ===  */
+.site-theme-switcher {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--site-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 16px var(--site-shadow);
+  z-index: 999;
+  transition: all 0.3s ease;
+}
+
+.site-theme-switcher:hover {
+  transform: scale(1.1);
+  background-color: var(--site-primary-hover);
+  box-shadow: 0 6px 20px var(--site-shadow);
+}
+
+.site-theme-switcher:active {
+  transform: scale(0.95);
+}
+
+/* Tablet and up - hide theme switcher (admin controls it) */
+@media (min-width: 768px) {
+  .site-theme-switcher {
+    display: none;
+  }
+}
+
+/* Theme indicator for debugging */
+.theme-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: var(--site-bg-tertiary);
+  color: var(--site-text-tertiary);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: monospace;
+  z-index: 10000;
+  display: none; /* Remove in production */
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  body, body * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  :root {
+    --site-bg: #ffffff;
+    --site-text: #000000;
+    --site-primary: #0066cc;
+  }
+}

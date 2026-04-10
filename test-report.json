@@ -1,0 +1,201 @@
+{
+  "timestamp": "2026-04-09T22:19:30.585Z",
+  "summary": {
+    "total": 33,
+    "passed": 26,
+    "failed": 7,
+    "passPercentage": 78.8
+  },
+  "results": [
+    {
+      "name": "Home Page (index.html)",
+      "passed": true,
+      "message": "Status: 200, Size: 198339 bytes, Valid HTML: true",
+      "statusCode": 200
+    },
+    {
+      "name": "Post Page",
+      "passed": true,
+      "message": "Status: 200, Size: 3544 bytes, Valid HTML: true",
+      "statusCode": 200
+    },
+    {
+      "name": "Mobile Page",
+      "passed": true,
+      "message": "Status: 200, Size: 43996 bytes, Valid HTML: true",
+      "statusCode": 200
+    },
+    {
+      "name": "Desktop Page",
+      "passed": true,
+      "message": "Status: 200, Size: 198330 bytes, Valid HTML: true",
+      "statusCode": 200
+    },
+    {
+      "name": "Post Desktop Page",
+      "passed": true,
+      "message": "Status: 200, Size: 5228 bytes, Valid HTML: true",
+      "statusCode": 200
+    },
+    {
+      "name": "Admin Dashboard",
+      "passed": false,
+      "message": "Status: 401, Size: 24 bytes",
+      "statusCode": 401
+    },
+    {
+      "name": "Content Editor",
+      "passed": false,
+      "message": "Status: 401, Size: 24 bytes",
+      "statusCode": 401
+    },
+    {
+      "name": "Admin Login",
+      "passed": true,
+      "message": "Status: 200, Size: 6203 bytes",
+      "statusCode": 200
+    },
+    {
+      "name": "Main CSS (app.css)",
+      "passed": true,
+      "message": "Status: 200, Size: 8537 bytes, Empty: false",
+      "statusCode": 200,
+      "isEmpty": false
+    },
+    {
+      "name": "Theme CSS (site-themes.css)",
+      "passed": true,
+      "message": "Status: 200, Size: 6293 bytes, Empty: false",
+      "statusCode": 200,
+      "isEmpty": false
+    },
+    {
+      "name": "Tailwind CSS",
+      "passed": true,
+      "message": "Status: 200, Size: 98666 bytes, Empty: false",
+      "statusCode": 200,
+      "isEmpty": false
+    },
+    {
+      "name": "App JavaScript",
+      "passed": true,
+      "message": "Status: 200, Size: 3524 bytes, Empty: false",
+      "statusCode": 200,
+      "isEmpty": false
+    },
+    {
+      "name": "Theme Manager JS",
+      "passed": true,
+      "message": "Status: 200, Size: 3932 bytes, Empty: false",
+      "statusCode": 200,
+      "isEmpty": false
+    },
+    {
+      "name": "Router JS",
+      "passed": true,
+      "message": "Status: 200, Size: 2480 bytes, Empty: false",
+      "statusCode": 200,
+      "isEmpty": false
+    },
+    {
+      "name": "RTL Styles",
+      "passed": true,
+      "message": "Status: 200, Size: 7313 bytes, Empty: false",
+      "statusCode": 200,
+      "isEmpty": false
+    },
+    {
+      "name": "GET /api/content",
+      "passed": false,
+      "message": "Status: 404, IsJSON: true, Size: 21 bytes",
+      "statusCode": 404
+    },
+    {
+      "name": "GET /api/content/published",
+      "passed": false,
+      "message": "Status: 404, IsJSON: true, Size: 21 bytes",
+      "statusCode": 404
+    },
+    {
+      "name": "GET /api/auth/check",
+      "passed": true,
+      "message": "Status: 200, IsJSON: true, Size: 23 bytes",
+      "statusCode": 200
+    },
+    {
+      "name": "Index Page - Has <head> section",
+      "passed": true,
+      "message": "Found"
+    },
+    {
+      "name": "Index Page - Has <body> section",
+      "passed": true,
+      "message": "Found"
+    },
+    {
+      "name": "Index Page - Has Language script",
+      "passed": false,
+      "message": "Missing"
+    },
+    {
+      "name": "Index Page - Has Zoom script",
+      "passed": true,
+      "message": "Found"
+    },
+    {
+      "name": "Index Page - Has app.css link",
+      "passed": false,
+      "message": "Missing"
+    },
+    {
+      "name": "Index Page - Has tailwind.css link",
+      "passed": true,
+      "message": "Found"
+    },
+    {
+      "name": "Index Page - Has app.js script",
+      "passed": false,
+      "message": "Missing"
+    },
+    {
+      "name": "Index Page - Has title meta",
+      "passed": true,
+      "message": "Found"
+    },
+    {
+      "name": "Index Page - Has description meta",
+      "passed": true,
+      "message": "Found"
+    },
+    {
+      "name": "Site Themes CSS",
+      "passed": true,
+      "message": "Exists: true, Size: 6293 bytes, Empty: false"
+    },
+    {
+      "name": "Site Theme Manager JS",
+      "passed": true,
+      "message": "Exists: true, Size: 3932 bytes, Empty: false"
+    },
+    {
+      "name": "Admin Themes CSS",
+      "passed": true,
+      "message": "Exists: true, Size: 12202 bytes, Empty: false"
+    },
+    {
+      "name": "Admin Theme Manager JS",
+      "passed": true,
+      "message": "Exists: true, Size: 10987 bytes, Empty: false"
+    },
+    {
+      "name": "Content Data",
+      "passed": true,
+      "message": "Valid JSON, Size: 20951 bytes"
+    },
+    {
+      "name": "Contacts Data",
+      "passed": true,
+      "message": "Valid JSON, Size: 271 bytes"
+    }
+  ]
+}
