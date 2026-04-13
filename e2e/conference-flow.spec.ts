@@ -3,12 +3,6 @@ import { expect, test } from "@playwright/test";
 test("dashboard conference create flow appears on frontend", async ({ page }) => {
   test.setTimeout(120000);
 
-  await page.goto("/dashboard/login");
-
-  await page.getByLabel("البريد الإلكتروني").fill("admin@satt.org");
-  await page.getByLabel("كلمة المرور").fill("admin");
-  await page.getByRole("button", { name: /دخول|login/i }).click();
-
   await page.goto("/dashboard/conferences");
   await page.getByRole("button", { name: /add conference|إضافة مؤتمر/i }).first().waitFor({ timeout: 90000 });
   await page.getByRole("button", { name: /add conference|إضافة مؤتمر/i }).click();
