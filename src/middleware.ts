@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { decrypt } from '@/lib/auth'
+import { hasValidSessionToken } from '@/lib/session-edge'
 
 export async function middleware(request: NextRequest) {
   const sessionCookie = request.cookies.get('session')?.value
@@ -12,7 +12,12 @@ export async function middleware(request: NextRequest) {
     if (pathname === '/dashboard/login' || pathname === '/dashboard/login/') {
       if (sessionCookie) {
         try {
-          await decrypt(sessionCookie)
+          const valid = await hasValidSessionToken(sessionCookie)
+
+          if (!valid) {
+            throw new Error('Invalid session')
+          }
+
           return NextResponse.redirect(new URL('/dashboard', request.url))
         } catch {}
       }
@@ -24,7 +29,12 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      await decrypt(sessionCookie)
+      const valid = await hasValidSessionToken(sessionCookie)
+
+      if (!valid) {
+        throw new Error('Invalid session')
+      }
+
       return NextResponse.next()
     } catch {
       return NextResponse.redirect(new URL('/dashboard/login', request.url))

@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import "@/app/globals.css";
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
 import { resolveLocale } from "@/lib/i18n";
+import { getSeoSettings } from "@/lib/seo";
 
 const sans = DM_Sans({
   subsets: ["latin"],
@@ -22,31 +23,33 @@ const arabic = Tajawal({
   variable: "--font-arabic",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoSettings();
+  const metadataBase = new URL(seo.siteUrl);
 
-export const metadata: Metadata = {
-  title: {
-    default: "الجمعية العلمية للعلاج الموجه",
-    template: "%s | الجمعية العلمية للعلاج الموجه",
-  },
-  description:
-    "الجمعية العلمية للعلاج الموجه توفر منصة للتعليم الطبي المستمر وتبادل الخبرات ودعم الأبحاث في مجال الأورام والعلاج الموجه.",
-  metadataBase: new URL(siteUrl),
-  openGraph: {
-    title: "الجمعية العلمية للعلاج الموجه",
-    description:
-      "الجمعية العلمية للعلاج الموجه توفر منصة للتعليم الطبي المستمر وتبادل الخبرات ودعم الأبحاث.",
-    type: "website",
-    url: siteUrl,
-    siteName: "الجمعية العلمية للعلاج الموجه",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "الجمعية العلمية للعلاج الموجه",
-    description:
-      "الجمعية العلمية للعلاج الموجه توفر منصة للتعليم الطبي المستمر وتبادل الخبرات ودعم الأبحاث.",
-  },
-};
+  return {
+    title: {
+      default: seo.title,
+      template: `%s | ${seo.title}`,
+    },
+    description: seo.description,
+    metadataBase,
+    openGraph: {
+      title: seo.title,
+      description: seo.description,
+      type: "website",
+      url: seo.siteUrl,
+      siteName: seo.title,
+      images: [{ url: seo.ogImage }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seo.title,
+      description: seo.description,
+      images: [seo.ogImage],
+    },
+  };
+}
 
 type RootLayoutProps = Readonly<{
   children: React.ReactNode;
