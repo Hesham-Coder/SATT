@@ -32,6 +32,7 @@ const {
 const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
+const pageRoutes = require('./routes/pages');
 
 const RedisStoreCtor = connectRedis.default || connectRedis.RedisStore || connectRedis;
 const app = express();
@@ -206,6 +207,9 @@ app.get('/health', async (req, res) => {
 function mountAppRoutes() {
   // Block access to sensitive paths before serving static files
   app.use(blockSensitivePaths);
+
+  // MPA Page routes (must be before publicRoutes)
+  app.use(pageRoutes);
 
   // Routes (before static)
   app.use(publicRoutes);

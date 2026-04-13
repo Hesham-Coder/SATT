@@ -1,20 +1,53 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <!-- Anti-FOUC: synchronously set dir/lang BEFORE any CSS is parsed -->
-    <script>(function(){try{var l=localStorage.getItem('lang')||'en';var d=document.documentElement;d.setAttribute('dir',l==='ar'?'rtl':'ltr');d.setAttribute('lang',l==='ar'?'ar':'en');d.classList.add('lang-'+l);}catch(e){}}());</script>
-    <script>(function(){try{var s=parseFloat(localStorage.getItem('site-zoom-level'));if(!isFinite(s))s=1;s=Math.min(1.5,Math.max(0.8,s));var v=String(Math.round((100/s)*100000)/100000);var style=document.createElement('style');style.textContent='body.site-zoom-enabled{overflow-x:hidden;}.site-zoom-frame{width:100%;overflow-x:hidden;}#app-zoom-wrapper{display:block;margin:0 auto;transform-origin:top center;transform:scale('+s+');width:'+v+'%;min-height:'+(s<1?v+'vh':'100vh')+';}';document.head.appendChild(style);}catch(e){}}());</script>
+    <script>
+      (function () {
+        try {
+          var lang = localStorage.getItem("lang") || "en";
+          var d = document.documentElement;
+          d.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+          d.setAttribute("lang", lang === "ar" ? "ar" : "en");
+        } catch (e) {}
+      })();
+    </script>
+    <script>
+      (function () {
+        try {
+          var scale = parseFloat(localStorage.getItem("site-zoom-level"));
+          if (!isFinite(scale)) scale = 1;
+          scale = Math.min(1.5, Math.max(0.8, scale));
+          var isDefaultScale = Math.abs(scale - 1) < 0.001;
+          var width = String(Math.round((100 / scale) * 100000) / 100000);
+          var style = document.createElement("style");
+          style.textContent = isDefaultScale
+            ? "body.site-zoom-enabled{overflow-x:hidden;}.site-zoom-frame{width:100%;overflow-x:hidden;}#app-zoom-wrapper{display:block;margin:0 auto;transform:none;width:100%;min-height:100vh;}"
+            : "body.site-zoom-enabled{overflow-x:hidden;}.site-zoom-frame{width:100%;overflow-x:hidden;}#app-zoom-wrapper{display:block;margin:0 auto;transform-origin:top center;transform:scale(" +
+              scale +
+              ");width:" +
+              width +
+              "%;min-height:" +
+              (scale < 1 ? width + "vh" : "100vh") +
+              ";}";
+          document.head.appendChild(style);
+        } catch (e) {}
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Comprehensive Cancer Center | Evidence-Based Cancer Care</title>
-    <meta name="description" content="Comprehensive Cancer Center provides coordinated, evidence-based cancer care including diagnostics, systemic therapy, radiation, surgery, supportive care, and genetic counseling." />
+    <meta
+      name="description"
+      content="Comprehensive Cancer Center provides coordinated, evidence-based cancer care including diagnostics, systemic therapy, radiation, surgery, supportive care, and genetic counseling."
+    />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href="https://www.waleedarafat.org/" />
-    <link rel="stylesheet" href="/css/tailwind.output.css?v=6c0316a5" />
-    <link rel="stylesheet" href="/css/site-themes.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
 
     <script>
-      // Apply theme before first paint to prevent flash
       (function () {
         try {
           var theme = localStorage.getItem("site-theme") || "auto";
@@ -22,902 +55,628 @@
             var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
             var hour = new Date().getHours();
             var isDay = hour >= 6 && hour < 19;
-            theme = prefersDark ? "dark" : (isDay ? "light" : "dark");
+            theme = prefersDark ? "dark" : isDay ? "light" : "dark";
           }
           document.documentElement.setAttribute("data-site-theme", theme);
         } catch (e) {}
       })();
     </script>
 
+    <link rel="stylesheet" href="/css/site-themes.css?v=8f8f5bca" />
+
     <style>
-      .whatsapp-widget {
-        position: fixed;
-        right: 16px;
-        bottom: calc(env(safe-area-inset-bottom, 0px) + 88px);
-        z-index: 60;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 56px;
-        height: 56px;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #25D366, #128C7E);
-        color: #fff;
-        box-shadow: 0 16px 36px rgba(18, 140, 126, 0.3);
+      :root {
+        --font-heading: "Sora", "Inter", sans-serif;
+        --font-body: "Inter", sans-serif;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 24px;
+        --space-6: 32px;
+        --radius-md: 16px;
+        --radius-lg: 22px;
+        --radius-xl: 28px;
+        --blue-900: #063b73;
+        --blue-700: #0b5da8;
+        --blue-100: #ddeefe;
+        --cta: #0b8f6b;
+        --n-900: #0f172a;
+        --n-700: #334155;
+        --n-100: #eef3f9;
+        --container: 1200px;
+        --header-h: 74px;
       }
 
-      .whatsapp-widget::before,
-      .whatsapp-widget::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        border: 1px solid rgba(37, 211, 102, 0.38);
-        animation: whatsappPulse 2.6s ease-out infinite;
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: var(--font-body);
+        color: var(--n-900);
+        background:
+          radial-gradient(1000px 420px at 88% -12%, #e8f3ff 0%, rgba(232, 243, 255, 0) 70%),
+          linear-gradient(180deg, #f9fcff 0%, #f4f8fd 56%, #f9fcff 100%);
+        line-height: 1.6;
       }
 
-      .whatsapp-widget::after {
-        animation-delay: 1.2s;
+      h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; letter-spacing: -0.02em; margin: 0; }
+      h1 { font-size: clamp(2.2rem, 5.4vw, 4rem); }
+      h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); }
+      h3 { font-size: clamp(1.25rem, 2.4vw, 1.6rem); }
+      p { margin: 0; color: var(--n-700); }
+      a { color: inherit; text-decoration: none; }
+      img { display: block; max-width: 100%; height: auto; }
+
+      .container { width: min(100% - 2rem, var(--container)); margin-inline: auto; }
+      .skip-link { position: absolute; left: -9999px; top: 8px; background: #0f172a; color: #fff; padding: 10px 12px; border-radius: 999px; z-index: 1000; }
+      .skip-link:focus { left: 8px; }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 70;
+        min-height: var(--header-h);
+        border-bottom: 1px solid #cfddee;
+        background: rgba(248, 251, 255, 0.84);
+        backdrop-filter: blur(14px);
       }
 
-      .whatsapp-widget svg {
-        width: 26px;
-        height: 26px;
-        position: relative;
-        z-index: 1;
-      }
+      .header-inner { min-height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+      .brand { display: inline-flex; align-items: center; gap: var(--space-3); min-width: 0; }
+      .brand-logo { width: 44px; height: 44px; border-radius: 14px; border: 1px solid #cdddf0; background: #fff; object-fit: contain; }
+      .brand-name { font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: #08284f; }
+      .header-actions { display: flex; align-items: center; gap: var(--space-2); }
 
-      @keyframes whatsappPulse {
-        0% { transform: scale(1); opacity: 0.72; }
-        100% { transform: scale(1.3); opacity: 0; }
+      .btn { min-height: 44px; padding: 0 18px; border: 1px solid transparent; border-radius: 999px; font-weight: 700; font-size: 0.94rem; transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease; }
+      .btn:focus-visible { outline: 3px solid #60a5fa; outline-offset: 2px; }
+      .btn-primary { background: linear-gradient(135deg, var(--cta), #0b7c6b); color: #fff; box-shadow: 0 10px 28px rgba(11, 143, 107, 0.3); }
+      .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 30px rgba(11, 143, 107, 0.35); }
+      .btn-outline { border-color: #9fb9d7; color: #0a396d; background: rgba(255, 255, 255, 0.9); }
+      .menu-btn { display: none; width: 44px; min-width: 44px; padding: 0; justify-content: center; }
+
+      .reveal { opacity: 0; transform: translateY(24px); transition: opacity 550ms ease, transform 550ms ease; }
+      .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+      .hero { padding: clamp(26px, 5vw, 56px) 0 clamp(48px, 7vw, 96px); }
+      .hero-panel { display: grid; gap: clamp(18px, 3vw, 30px); grid-template-columns: 1fr; }
+      .hero-copy { background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(245, 251, 255, 0.96)); border: 1px solid #d9e7f6; border-radius: var(--radius-xl); padding: clamp(24px, 4vw, 44px); box-shadow: 0 20px 50px rgba(12, 42, 85, 0.13); }
+      .eyebrow { display: inline-flex; gap: var(--space-2); background: #ebf4ff; color: #0b4d93; border: 1px solid #c9dff7; border-radius: 999px; font-weight: 700; font-size: 0.8rem; padding: 7px 12px; margin-bottom: var(--space-4); }
+      .hero-title { max-width: 17ch; color: #08284f; }
+      .hero-lead { margin-top: var(--space-4); max-width: 58ch; font-size: clamp(1rem, 1.4vw, 1.1rem); color: #29445f; }
+      .hero-actions { margin-top: var(--space-5); display: flex; flex-wrap: wrap; gap: var(--space-3); }
+      .hero-proof { margin-top: var(--space-4); display: flex; flex-wrap: wrap; gap: 10px; }
+      .proof-chip { display: inline-flex; align-items: center; min-height: 34px; padding: 6px 12px; border-radius: 999px; border: 1px solid #cfe0f2; background: #f8fbff; color: #264b73; font-weight: 600; font-size: 0.82rem; }
+
+      .hero-trust { margin-top: var(--space-5); display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-3); }
+      .trust-item { background: #fff; border: 1px solid #d7e6f7; border-radius: var(--radius-md); padding: var(--space-3); }
+      .trust-value { font-family: var(--font-heading); font-size: clamp(1.1rem, 2vw, 1.5rem); color: #083566; }
+      .trust-label { font-size: 0.8rem; color: #3f5f83; margin-top: 4px; }
+
+      .hero-visual { position: relative; overflow: hidden; border-radius: var(--radius-xl); min-height: 360px; background: #012b55; box-shadow: 0 18px 38px rgba(6, 31, 64, 0.24); }
+      .hero-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .hero-visual::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(1, 36, 73, 0.8) 15%, rgba(9, 66, 123, 0.32) 60%, rgba(15, 101, 168, 0.2) 100%); }
+      .visual-chip { position: absolute; z-index: 1; bottom: 18px; left: 18px; right: 18px; border: 1px solid rgba(255, 255, 255, 0.33); background: rgba(4, 42, 82, 0.42); color: #eff7ff; border-radius: var(--radius-md); padding: 14px 16px; font-size: 0.93rem; }
+
+      section { padding-bottom: clamp(42px, 7vw, 72px); }
+      .section-head { margin-bottom: var(--space-5); }
+      .section-head p { max-width: 62ch; margin-top: var(--space-2); color: #445f7e; }
+
+      .stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+      .stat-card { border: 1px solid #d8e5f5; border-radius: var(--radius-lg); background: #fff; padding: 18px; box-shadow: 0 8px 18px rgba(15, 53, 98, 0.07); }
+      .stat-icon { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, #0b62ad, #1993dc); }
+      .stat-number { margin-top: 14px; font-family: var(--font-heading); font-size: clamp(1.5rem, 3vw, 2rem); color: #072f5d; }
+
+      .services-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(1, minmax(0, 1fr)); }
+      .service-card { border: 1px solid #d7e6f6; background: linear-gradient(180deg, #ffffff, #f8fbff); border-radius: var(--radius-lg); padding: var(--space-5); transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease; box-shadow: 0 10px 22px rgba(10, 47, 89, 0.07); }
+      .service-card:hover { transform: translateY(-2px); border-color: #87b4e2; box-shadow: 0 14px 28px rgba(10, 57, 107, 0.13); }
+      .service-icon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, #105fa8, #1f88d6); }
+      .service-card p { margin-top: var(--space-3); }
+      .service-link { display: inline-flex; align-items: center; gap: var(--space-2); margin-top: var(--space-4); color: #0a4d8f; font-weight: 700; }
+
+      .about-wrap { display: grid; gap: var(--space-5); grid-template-columns: 1fr; border: 1px solid #d8e6f5; border-radius: var(--radius-xl); background: #fff; overflow: hidden; box-shadow: 0 10px 24px rgba(7, 45, 87, 0.09); }
+      .about-copy { padding: clamp(22px, 3vw, 36px); }
+      .about-points { margin-top: var(--space-4); display: grid; gap: var(--space-3); }
+      .about-point { display: flex; gap: var(--space-3); align-items: start; }
+      .point-icon { width: 28px; height: 28px; border-radius: 999px; background: #e3f1ff; color: #0a4f95; display: grid; place-items: center; flex: none; margin-top: 2px; }
+      .about-visual { min-height: 320px; background: #113f72; }
+      .about-visual img { width: 100%; height: 100%; object-fit: cover; }
+
+      .news-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(1, minmax(0, 1fr)); }
+      .news-card { border: 1px solid #d5e4f4; border-radius: var(--radius-lg); background: #fff; overflow: hidden; transition: transform 180ms ease, box-shadow 180ms ease; box-shadow: 0 10px 22px rgba(7, 41, 78, 0.09); }
+      .news-card:hover { transform: translateY(-2px); box-shadow: 0 14px 26px rgba(9, 47, 89, 0.13); }
+      .news-media { aspect-ratio: 16 / 9; background: #d8e9fa; overflow: hidden; }
+      .news-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 260ms ease; }
+      .news-card:hover .news-media img { transform: scale(1.06); }
+      .news-content { padding: var(--space-4); }
+      .news-tag { display: inline-block; padding: 4px 10px; border-radius: 999px; border: 1px solid #c8ddf4; font-size: 0.75rem; font-weight: 700; color: #0b4f95; }
+      .news-meta { margin-top: var(--space-2); color: #5c7695; font-size: 0.84rem; }
+
+      .cta-block { border-radius: var(--radius-xl); padding: clamp(24px, 4vw, 44px); background: linear-gradient(125deg, #084176, #0b6ab8 50%, #0d8ba0 100%); color: #fff; box-shadow: 0 14px 28px rgba(4, 33, 66, 0.24); }
+      .cta-block p { color: rgba(255, 255, 255, 0.9); margin-top: var(--space-3); max-width: 56ch; }
+      .cta-block .btn { margin-top: var(--space-5); background: #fff; color: #0a437c; }
+
+      .consultation { border: 1px solid #d3e3f5; border-radius: var(--radius-xl); background: #fff; box-shadow: 0 10px 24px rgba(10, 48, 89, 0.09); overflow: hidden; }
+      .consultation-head { border-bottom: 1px solid #dbe7f5; background: #f5faff; padding: 20px; }
+      .consultation-note { margin-top: 8px; color: #4a6685; font-size: 0.9rem; }
+      .steps { margin-top: var(--space-3); display: flex; gap: var(--space-2); flex-wrap: wrap; }
+      .step-dot { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 34px; border-radius: 999px; border: 1px solid #bfd6ee; color: #44617f; background: #fff; font-weight: 700; }
+      .step-dot.is-active { border-color: #1270bf; background: #1270bf; color: #fff; }
+      .consultation-body { padding: 22px; }
+      .step-pane { display: none; }
+      .step-pane.is-active { display: block; }
+      .form-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(1, minmax(0, 1fr)); }
+      .field { display: grid; gap: 8px; }
+      .field label { color: #173a5f; font-weight: 700; font-size: 0.9rem; }
+      .field input, .field select, .field textarea { width: 100%; min-height: 46px; border-radius: 12px; border: 1px solid #c8dcf2; background: #fff; padding: 10px 12px; font-family: var(--font-body); color: #0f2945; }
+      .field textarea { min-height: 120px; resize: vertical; }
+      .field input:focus, .field select:focus, .field textarea:focus { outline: 3px solid #8bc1f4; border-color: #1d77c4; }
+      .step-actions { margin-top: var(--space-5); display: flex; justify-content: space-between; gap: var(--space-3); }
+      .btn-muted { border-color: #c6daee; background: #fff; color: #33597f; }
+      .form-status { margin-top: var(--space-4); border-radius: 12px; border: 1px solid #d4e5f6; background: #f6fbff; color: #284a6f; padding: 12px; display: none; }
+      .privacy-note { margin-top: 14px; color: #4a6787; font-size: 0.86rem; }
+
+      .skeleton { border-radius: 14px; background: linear-gradient(90deg, #e8f0fb 25%, #f5f9ff 35%, #e8f0fb 55%); background-size: 220% 100%; animation: shimmer 1.2s linear infinite; }
+      .skeleton-line { height: 16px; margin-bottom: 8px; }
+      .skeleton-title { height: 24px; width: 55%; margin-bottom: 10px; }
+      @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+      .mobile-sticky-cta { position: fixed; left: var(--space-4); right: calc(var(--space-4) + 78px); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); z-index: 80; display: none; }
+      .mobile-sticky-cta .btn { width: 100%; justify-content: center; }
+      .whatsapp-widget { position: fixed; right: 14px; bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); z-index: 85; width: 58px; height: 58px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; background: linear-gradient(135deg, #25d366, #128c7e); color: #fff; box-shadow: 0 14px 30px rgba(18, 140, 126, 0.34); }
+      .whatsapp-widget svg { width: 28px; height: 28px; }
+
+      .mobile-drawer { position: fixed; top: var(--header-h); right: var(--space-4); left: var(--space-4); background: #fff; border: 1px solid #cfe0f1; border-radius: var(--radius-md); box-shadow: 0 20px 35px rgba(12, 47, 87, 0.2); padding: var(--space-3); z-index: 75; display: none; }
+      .drawer-link { display: flex; align-items: center; min-height: 44px; border-radius: 12px; padding: 8px 10px; color: #123d69; font-weight: 700; }
+      .drawer-link:hover { background: #edf5ff; }
+
+      @media (max-width: 980px) {
+        .header-nav, .header-cta { display: none; }
+        .menu-btn { display: inline-flex; }
+        .mobile-sticky-cta { display: block; }
+        body { padding-bottom: 88px; }
+      }
+      @media (max-width: 560px) {
+        .container { width: min(100% - 1.25rem, var(--container)); }
+        .hero-copy { padding: 20px; }
+        .consultation-body { padding: 18px; }
+        .step-actions { flex-wrap: wrap; }
+      }
+      @media (min-width: 760px) {
+        .stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (min-width: 1080px) {
+        .hero-panel { grid-template-columns: 1.1fr 0.9fr; }
+        .about-wrap { grid-template-columns: 1.12fr 0.88fr; }
+        .services-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .news-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .reveal, .service-card, .news-card, .news-media img, .btn, .skeleton { transition: none !important; animation: none !important; transform: none !important; }
       }
     </style>
   </head>
-
-  <body class="site-zoom-enabled bg-slate-50 text-slate-900">
+  <body class="site-zoom-enabled">
     <div class="site-zoom-frame">
-    <div id="app-zoom-wrapper">
-    <a
-      href="#main"
-      class="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-slate-900 focus:px-3 focus:py-2 focus:text-white"
-    >
-      Skip to content
-    </a>
+      <div id="app-zoom-wrapper">
+        <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- Top Bar -->
-    <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
-      <div class="mx-auto flex h-14 max-w-xl items-center justify-between px-4 sm:h-16 sm:px-5">
-        <a href="/" class="flex items-center gap-2" aria-label="Go to homepage">
-          <img
-            id="siteLogo"
-            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
-            alt="Clinic logo"
-            class="h-8 w-8 rounded-lg bg-slate-100 object-contain"
-            loading="eager"
-          />
-          <span id="siteLogoName" class="text-sm font-extrabold tracking-tight sm:text-base">Comprehensive Cancer Center</span>
+        <header class="site-header" role="banner">
+          <div class="container header-inner">
+            <a class="brand" href="/" aria-label="Go to homepage">
+              <img id="siteLogo" class="brand-logo" src="/uploads/img-1770765094009-eigrur.jpg" alt="Center logo" onerror="this.onerror=null;this.src='/uploads/img-1770765094009-eigrur.jpg';" />
+              <span id="siteLogoName" class="brand-name">Comprehensive Cancer Center</span>
+            </a>
+            <nav class="header-nav" aria-label="Primary">
+              <a class="btn btn-outline" href="#services">Services</a>
+              <a class="btn btn-outline" href="#about">Why Choose Us</a>
+              <a class="btn btn-outline" href="#news">News</a>
+            </nav>
+            <div class="header-actions">
+              <a class="btn btn-primary header-cta" href="#consultation">Request Consultation</a>
+              <button id="menuBtn" type="button" class="btn btn-outline menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">Menu</button>
+            </div>
+          </div>
+          <div id="mobileMenu" class="mobile-drawer" role="dialog" aria-label="Mobile menu">
+            <a class="drawer-link" href="#services">Services</a>
+            <a class="drawer-link" href="#team">Specialists</a>
+            <a class="drawer-link" href="#news">News and Articles</a>
+            <a class="drawer-link" href="#consultation">Consultation</a>
+          </div>
+        </header>
+
+        <main id="main">
+          <section class="hero">
+            <div class="container hero-panel reveal">
+              <article class="hero-copy">
+                <p id="heroKicker" class="eyebrow">Evidence-based oncology care</p>
+                <h1 id="heroHeading" class="hero-title">Advanced Cancer Care. Personalized for You.</h1>
+                <p id="heroDescription" class="hero-lead">Faster diagnosis, coordinated specialists, and treatment plans centered around your life, goals, and confidence.</p>
+                <div class="hero-actions">
+                  <a id="heroCtaPrimary" class="btn btn-primary" href="#consultation">Book Consultation in 2 Minutes</a>
+                  <a id="heroCtaSecondary" class="btn btn-outline" href="#services">Explore Treatments</a>
+                </div>
+                <div class="hero-proof" aria-label="Quick reassurance">
+                  <span class="proof-chip">No referral required</span>
+                  <span class="proof-chip">Insurance support guidance</span>
+                  <span class="proof-chip">Multilingual care team</span>
+                </div>
+                <div class="hero-trust" aria-label="Trust indicators">
+                  <article class="trust-item"><div id="statPatients" class="trust-value" data-count="5000" data-suffix="+">5000+</div><p class="trust-label">Patients served</p></article>
+                  <article class="trust-item"><div id="statSuccess" class="trust-value" data-count="95" data-suffix="%">95%</div><p class="trust-label">Positive outcomes</p></article>
+                  <article class="trust-item"><div id="statSpecialists" class="trust-value" data-count="50" data-suffix="+">50+</div><p class="trust-label">Specialists</p></article>
+                </div>
+              </article>
+              <aside class="hero-visual" aria-label="Specialist care image">
+                <img id="heroImage" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="Medical team supporting a patient" loading="eager" />
+                <div class="visual-chip">Board-certified multidisciplinary team with rapid diagnostics and coordinated treatment pathways.</div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="container reveal" id="metrics" aria-label="Clinical metrics">
+            <div class="section-head">
+              <h2>Outcomes You Can Trust</h2>
+              <p>Transparent performance metrics from our coordinated care model, reviewed continuously for quality improvement.</p>
+            </div>
+            <div class="stats-grid">
+              <article class="stat-card"><div class="stat-icon">+</div><div class="stat-number" data-count="5000" data-suffix="+">5000+</div><p>Patients treated across multiple cancer pathways.</p></article>
+              <article class="stat-card"><div class="stat-icon">%</div><div class="stat-number" data-count="95" data-suffix="%">95%</div><p>Positive care experience rating from patient follow-up.</p></article>
+              <article class="stat-card"><div class="stat-icon">24</div><div class="stat-number" data-count="24" data-suffix="h">24h</div><p>Average specialist callback for consultation requests.</p></article>
+              <article class="stat-card"><div class="stat-icon">MD</div><div class="stat-number" data-count="50" data-suffix="+">50+</div><p>Oncology specialists, surgeons, and supportive experts.</p></article>
+            </div>
+          </section>
+
+          <section class="container reveal" id="services" data-section-id="services" aria-label="Services">
+            <div class="section-head">
+              <h2>Treatment Services Designed Around Outcomes</h2>
+              <p>Each service combines medical precision, clear guidance, and measurable next steps for patients and families.</p>
+            </div>
+            <div id="servicesRow" class="services-grid" role="list">
+              <article class="service-card" role="listitem"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></article>
+              <article class="service-card" role="listitem"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></article>
+              <article class="service-card" role="listitem"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></article>
+            </div>
+          </section>
+
+          <span id="about"></span>
+          <span id="team"></span>
+          <section class="container reveal" data-section-id="about" aria-label="About and trust">
+            <div class="section-head">
+              <h2>Why Choose Us</h2>
+              <p>Experienced specialists, coordinated planning, and research-backed protocols that keep decisions clear and timely.</p>
+            </div>
+            <article class="about-wrap">
+              <div class="about-copy">
+                <h3 id="videoTitle">Comprehensive Cancer Care, Coordinated by Experts</h3>
+                <p id="videoSubtitle" style="margin-top: 12px;">From first consultation to follow-up, we align specialists and treatment decisions around one patient-centered plan.</p>
+                <div class="about-points">
+                  <div class="about-point"><span class="point-icon">1</span><div><strong>Board-certified specialists</strong><p>Dedicated oncology team across diagnosis, treatment, and survivorship.</p></div></div>
+                  <div class="about-point"><span class="point-icon">2</span><div><strong>Coordinated care pathway</strong><p>One care journey with clear handoffs and communication.</p></div></div>
+                  <div class="about-point"><span class="point-icon">3</span><div><strong>Research-backed treatment</strong><p>Evidence-based protocols personalized to each patient profile.</p></div></div>
+                </div>
+              </div>
+              <div class="about-visual"><img id="aboutImage" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="Doctor team discussing treatment plan" loading="lazy" /></div>
+            </article>
+          </section>
+
+          <span id="testimonials"></span>
+          <span id="articles"></span>
+          <section class="container reveal" id="news" data-section-id="news" aria-label="News and insights">
+            <div class="section-head">
+              <h2>Latest News and Patient Education</h2>
+              <p>Stay informed with timely medical updates, treatment guidance, and practical health insights from our experts.</p>
+            </div>
+            <div id="tabPanelNews" class="news-grid">
+              <article class="news-card"><div class="news-media skeleton"></div><div class="news-content"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-line"></div></div></article>
+              <article class="news-card"><div class="news-media skeleton"></div><div class="news-content"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-line"></div></div></article>
+              <article class="news-card"><div class="news-media skeleton"></div><div class="news-content"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-line"></div></div></article>
+            </div>
+          </section>
+
+          <section class="container reveal" data-section-id="cta" aria-label="Primary call to action">
+            <article class="cta-block">
+              <h2>You do not have to face cancer alone.</h2>
+              <p>Talk with a specialist care coordinator, understand your next medical step, and move forward with confidence and support.</p>
+              <a class="btn" href="#consultation">Speak With Care Team</a>
+            </article>
+          </section>
+
+          <span id="contact"></span>
+          <section id="consultation" class="container reveal" data-section-id="contact" aria-label="Consultation form">
+            <article class="consultation">
+              <header class="consultation-head">
+                <h2>Request a Consultation</h2>
+                <p style="margin-top: 10px; color: #466686;">Three quick steps. For non-emergency inquiries only.</p>
+                <div class="steps" aria-label="Form progress"><span id="dot1" class="step-dot is-active">1</span><span id="dot2" class="step-dot">2</span><span id="dot3" class="step-dot">3</span></div>
+                <p id="stepLabel" class="consultation-note">Step 1 of 3: Contact details</p>
+              </header>
+              <div class="consultation-body">
+                <form id="contactForm" novalidate>
+                  <section class="step-pane is-active" data-step="1">
+                    <div class="form-grid">
+                      <div class="field"><label for="firstName">First name</label><input id="firstName" name="firstName" type="text" autocomplete="given-name" placeholder="e.g., Sarah" required /></div>
+                      <div class="field"><label for="lastName">Last name</label><input id="lastName" name="lastName" type="text" autocomplete="family-name" placeholder="e.g., Ahmed" required /></div>
+                      <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="name@example.com" required /></div>
+                      <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+20 ..." required /></div>
+                    </div>
+                  </section>
+                  <section class="step-pane" data-step="2">
+                    <div class="form-grid">
+                      <div class="field"><label for="concern">Primary concern</label><select id="concern" name="concern" required><option value="">Select</option><option value="diagnosis">Diagnosis review</option><option value="treatment">Treatment options</option><option value="surgery">Surgical planning</option><option value="genetic">Genetic counseling</option><option value="support">Supportive care</option></select></div>
+                      <div class="field"><label for="medicalDetails">Medical details</label><textarea id="medicalDetails" rows="5" placeholder="Share brief medical history, current diagnosis, or concerns."></textarea></div>
+                    </div>
+                  </section>
+                  <section class="step-pane" data-step="3">
+                    <h3 style="color: #103e6c; margin-bottom: 12px;">Confirm details and submit</h3>
+                    <p style="margin-bottom: 18px; color: #476787;">Our team reviews every request and responds as quickly as possible.</p>
+                    <ul style="margin: 0 0 12px 20px; color: #355677;"><li>Expected callback window: within 24 hours.</li><li>Please avoid full national IDs or full medical records.</li><li>For urgent symptoms, contact local emergency services immediately.</li></ul>
+                  </section>
+                  <div class="step-actions"><button id="prevStep" type="button" class="btn btn-muted">Previous</button><button id="nextStep" type="button" class="btn btn-primary">Next</button><button id="submitStep" type="submit" class="btn btn-primary" style="display: none;">Submit Consultation</button></div>
+                  <p class="privacy-note">We only use this information to contact you about your consultation request.</p>
+                  <div id="contactStatus" class="form-status" role="status" aria-live="polite"></div>
+                </form>
+              </div>
+            </article>
+          </section>
+        </main>
+
+        <div class="mobile-sticky-cta"><a class="btn btn-primary" href="#consultation">Book Consultation</a></div>
+
+        <a id="whatsappWidget" class="whatsapp-widget" href="#" target="_blank" rel="noopener noreferrer" aria-label="Open WhatsApp chat" title="Chat on WhatsApp">
+          <svg viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M380.9 97.1C339 55.1 283.2 32 223.9 32 100.3 32 0 132.3 0 255.9c0 39.5 10.3 78.1 29.8 112.2L0 480l114.7-30.1c32.4 17.7 69 27 109.2 27h.1c123.6 0 223.9-100.3 223.9-223.9 0-59.3-23.1-115-65-156zm-157 341.6h-.1c-33.4 0-66.1-8.9-94.7-25.7l-6.8-4-68.1 17.9 18.2-66.4-4.4-6.9c-18-28.7-27.5-61.9-27.5-96.2 0-98.3 80-178.3 178.4-178.3 47.7 0 92.6 18.6 126.4 52.4s52.3 78.8 52.3 126.5c0 98.2-80 178.2-178.3 178.2zm101.5-138.9c-5.5-2.8-32.8-16.1-37.9-17.9-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.5-14.3 17.9-17.6 21.5-3.2 3.7-6.5 4.1-12 .9-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2s-9.7 1.4-14.8 6.9c-5.1 5.5-19.4 19-19.4 46.3s19.9 53.7 22.6 57.4c2.8 3.7 39.1 59.8 94.8 83.8 13.2 5.7 23.5 9.1 31.5 11.7 13.2 4.2 25.3 3.6 34.8 2.2 10.6-1.6 32.8-13.4 37.4-26.3 4.6-12.9 4.6-24 3.2-26.3-1.3-2.3-5-3.7-10.5-6.5z"></path></svg>
         </a>
 
-        <button
-          id="menuBtn"
-          type="button"
-          class="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-          aria-label="Open menu"
-          aria-controls="mobileMenu"
-          aria-expanded="false"
-        >
-          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Mobile Menu Drawer -->
-      <div id="mobileMenu" class="hidden border-t border-slate-200 bg-white">
-        <nav class="mx-auto max-w-xl px-4 py-3 sm:px-5" aria-label="Primary">
-          <ul class="grid gap-2">
-            <li>
-              <a
-                class="flex min-h-[44px] items-center justify-between rounded-xl px-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                href="#services"
-              >
-                Services <span class="text-slate-400" aria-hidden="true">›</span>
-              </a>
-            </li>
-            <li>
-              <a
-                class="flex min-h-[44px] items-center justify-between rounded-xl px-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                href="#doctors"
-              >
-                Doctors <span class="text-slate-400" aria-hidden="true">›</span>
-              </a>
-            </li>
-            <li>
-              <a
-                class="flex min-h-[44px] items-center justify-between rounded-xl px-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                href="#news"
-              >
-                News & Articles <span class="text-slate-400" aria-hidden="true">›</span>
-              </a>
-            </li>
-            <li>
-              <a
-                class="flex min-h-[44px] items-center justify-between rounded-xl px-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                href="#contact"
-              >
-                Contact <span class="text-slate-400" aria-hidden="true">›</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
-
-    <main id="main" class="mx-auto max-w-xl px-4 pb-12 pt-5 sm:px-5 sm:pt-6">
-      <div id="mobileDebug" class="mb-4 hidden rounded-2xl border border-slate-200 bg-white p-3 text-xs text-slate-700" role="status" aria-live="polite"></div>
-
-      <!-- 1) Hero -->
-      <section class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6" aria-label="Hero">
-        <div class="grid gap-4 sm:gap-5">
-          <div class="grid gap-2">
-            <p id="heroKicker" class="inline-flex w-fit items-center gap-2 rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-800">
-              <span class="h-2 w-2 rounded-full bg-sky-500" aria-hidden="true"></span>
-              Evidence-based cancer care
-            </p>
-            <h1 id="heroHeading" class="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-              Science That Heals. Care That Connects.
-            </h1>
-            <p id="heroDescription" class="text-sm leading-6 text-slate-600 sm:text-base">
-              Multidisciplinary specialists, coordinated plans, and supportive care designed around you.
-            </p>
-          </div>
-
-          <div class="grid gap-4 sm:grid-cols-[1fr,auto] sm:items-center">
-            <div class="flex flex-wrap gap-3">
-              <a
-                id="heroCtaPrimary"
-                href="#contact"
-                class="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-rose-600 px-4 text-sm font-bold text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-400"
-                aria-label="Schedule a consultation"
-              >
-                Schedule a Consultation
-              </a>
-              <a
-                id="heroCtaSecondary"
-                href="#services"
-                class="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-                aria-label="Learn more about services"
-              >
-                Learn More
-              </a>
-            </div>
-
-            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-              <img
-                id="heroImage"
-                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
-                alt="Hero image"
-                class="h-44 w-full object-cover sm:h-40 sm:w-44"
-                loading="lazy"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 2) Stats row -->
-      <section class="mt-4 grid grid-cols-3 gap-3 sm:mt-5 sm:gap-4" aria-label="Key stats">
-        <div class="rounded-2xl border border-slate-200 bg-white p-3 text-center shadow-sm">
-          <p id="statPatients" class="text-lg font-extrabold text-slate-900 sm:text-xl">5000+</p>
-          <p class="mt-1 text-xs font-semibold text-slate-600 sm:text-sm">Patients served</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-3 text-center shadow-sm">
-          <p id="statSuccess" class="text-lg font-extrabold text-slate-900 sm:text-xl">95%</p>
-          <p class="mt-1 text-xs font-semibold text-slate-600 sm:text-sm">Success rate</p>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-3 text-center shadow-sm">
-          <p id="statSpecialists" class="text-lg font-extrabold text-slate-900 sm:text-xl">50+</p>
-          <p class="mt-1 text-xs font-semibold text-slate-600 sm:text-sm">Specialists</p>
-        </div>
-      </section>
-
-      <!-- 3) Services: horizontally scrollable cards -->
-      <section id="services" class="mt-6 sm:mt-7" aria-label="Services">
-        <div class="flex items-end justify-between gap-3">
-          <div>
-            <h2 class="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">Services</h2>
-            <p class="mt-1 text-sm text-slate-600">Swipe to explore what we offer.</p>
-          </div>
-          <span class="text-xs font-semibold text-slate-500" aria-hidden="true">Swipe →</span>
-        </div>
-
-        <div
-          id="servicesRow"
-          class="mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch]"
-          role="list"
-          aria-label="Service cards"
-        >
-          <article class="min-w-[78%] snap-start rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:min-w-[55%]" role="listitem">
-            <h3 class="text-base font-extrabold text-slate-900">Loading…</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-600">Fetching services from dashboard.</p>
-          </article>
-        </div>
-      </section>
-
-      <!-- 4) Video embed with title -->
-      <section id="video" class="mt-6 sm:mt-7" aria-label="Video">
-        <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <h2 id="videoTitle" class="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">Center Overview</h2>
-              <p id="videoSubtitle" class="mt-1 text-sm text-slate-600">Watch a short introduction.</p>
-            </div>
-          </div>
-
-          <div id="videoContainer" class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-            <div class="aspect-video w-full">
-              <iframe
-                id="videoFrame"
-                class="h-full w-full"
-                src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
-                title="Center Overview Video"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
-                loading="lazy"
-              ></iframe>
-              <video
-                id="videoFilePlayer"
-                class="h-full w-full"
-                controls
-                preload="metadata"
-                style="display:none;"
-              ></video>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 5) Doctors carousel (mobile-friendly) -->
-      <section id="doctors" class="mt-6 sm:mt-7" aria-label="Doctors">
-        <div class="flex items-end justify-between gap-3">
-          <div>
-            <h2 class="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">Doctors</h2>
-            <p class="mt-1 text-sm text-slate-600">Swipe to meet our specialists.</p>
-          </div>
-          <span class="text-xs font-semibold text-slate-500" aria-hidden="true">Swipe →</span>
-        </div>
-
-        <div
-          id="doctorsRow"
-          class="mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch]"
-          role="region"
-          aria-label="Doctors carousel"
-        >
-          <article class="min-w-[86%] snap-start rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:min-w-[60%]">
-            <h3 class="text-base font-extrabold text-slate-900">Loading…</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-600">Fetching doctors from dashboard.</p>
-          </article>
-        </div>
-      </section>
-
-      <!-- 6) News & Articles with tabs -->
-      <section id="news" class="mt-6 sm:mt-7" aria-label="News and articles">
-        <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-          <h2 class="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">News & Articles</h2>
-          <p class="mt-1 text-sm text-slate-600">Switch tabs to explore updates and long-form content.</p>
-
-          <div class="mt-4" role="tablist" aria-label="News and Articles tabs">
-            <div class="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                class="tab-btn min-h-[44px] rounded-xl border border-slate-200 bg-slate-900 px-3 text-sm font-extrabold text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                role="tab"
-                aria-selected="true"
-                aria-controls="tabPanelNews"
-                id="tabNews"
-                data-tab="news"
-              >
-                News
-              </button>
-              <button
-                type="button"
-                class="tab-btn min-h-[44px] rounded-xl border border-slate-200 bg-white px-3 text-sm font-extrabold text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                role="tab"
-                aria-selected="false"
-                aria-controls="tabPanelArticles"
-                id="tabArticles"
-                data-tab="articles"
-              >
-                Articles
-              </button>
-            </div>
-          </div>
-
-          <div class="mt-4">
-            <!-- News Panel -->
-            <div id="tabPanelNews" role="tabpanel" aria-labelledby="tabNews" class="tab-panel grid gap-3">
-              <div class="rounded-2xl border border-slate-200 p-4 text-sm text-slate-600">Loading news…</div>
-            </div>
-
-            <!-- Articles Panel -->
-            <div id="tabPanelArticles" role="tabpanel" aria-labelledby="tabArticles" class="tab-panel hidden grid gap-3">
-              <div class="rounded-2xl border border-slate-200 p-4 text-sm text-slate-600">Loading articles…</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 7) Large CTA section with gradient background and button -->
-      <section class="mt-6 sm:mt-7" aria-label="Call to action">
-        <div class="rounded-3xl bg-gradient-to-br from-sky-600 to-indigo-700 p-5 text-white shadow-sm sm:p-6">
-          <h2 class="text-xl font-extrabold tracking-tight sm:text-2xl">Start a confidential conversation</h2>
-          <p class="mt-2 text-sm leading-6 text-white/90 sm:text-base">
-            Share a few details and our patient coordination team will call you back.
-          </p>
-          <div class="mt-4">
-            <a
-              href="#contact"
-              class="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-white px-4 text-sm font-extrabold text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-white/60"
-            >
-              Get a Call Back
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- 8) Contact form -->
-      <section id="contact" class="mt-6 sm:mt-7" aria-label="Contact form">
-        <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-          <h2 class="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">Contact</h2>
-          <p class="mt-1 text-sm text-slate-600">This form is not for emergencies.</p>
-
-          <form id="contactForm" class="mt-4 grid gap-3" novalidate>
-            <div class="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label for="firstName" class="block text-sm font-bold text-slate-900">First name</label>
-                <input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  autocomplete="given-name"
-                  required
-                  class="mt-2 w-full min-h-[44px] rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-                />
-              </div>
-
-              <div>
-                <label for="lastName" class="block text-sm font-bold text-slate-900">Last name</label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  autocomplete="family-name"
-                  required
-                  class="mt-2 w-full min-h-[44px] rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label for="email" class="block text-sm font-bold text-slate-900">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autocomplete="email"
-                required
-                class="mt-2 w-full min-h-[44px] rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
-            </div>
-
-            <div>
-              <label for="phone" class="block text-sm font-bold text-slate-900">Phone</label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                inputmode="tel"
-                autocomplete="tel"
-                required
-                class="mt-2 w-full min-h-[44px] rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
-            </div>
-
-            <div>
-              <label for="concern" class="block text-sm font-bold text-slate-900">Primary concern</label>
-              <select
-                id="concern"
-                name="concern"
-                required
-                class="mt-2 w-full min-h-[44px] rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-              >
-                <option value="">Select</option>
-                <option value="diagnosis">Diagnosis</option>
-                <option value="treatment">Treatment</option>
-                <option value="genetic">Genetic counseling</option>
-                <option value="support">Support</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="message" class="block text-sm font-bold text-slate-900">Message</label>
-              <textarea
-                id="message"
-                name="message"
-                rows="4"
-                class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-                placeholder="Tell us how we can help (optional)"
-              ></textarea>
-            </div>
-
-            <div class="pt-1">
-              <button
-                type="submit"
-                class="inline-flex w-full min-h-[44px] items-center justify-center rounded-xl bg-rose-600 px-4 text-sm font-extrabold text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-400"
-              >
-                Submit
-              </button>
-            </div>
-
-            <div id="contactStatus" class="hidden rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700" role="status" aria-live="polite"></div>
-
-            <p class="text-xs leading-5 text-slate-500">
-              Please do not include full medical records or highly sensitive identifiers.
-            </p>
-          </form>
-        </div>
-      </section>
-    </main>
-
-    <a
-      id="whatsappWidget"
-      class="whatsapp-widget"
-      href="#"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Open WhatsApp chat"
-      title="Chat on WhatsApp"
-    >
-      <svg viewBox="0 0 448 512" aria-hidden="true" focusable="false">
-        <path fill="currentColor" d="M380.9 97.1C339 55.1 283.2 32 223.9 32 100.3 32 0 132.3 0 255.9c0 39.5 10.3 78.1 29.8 112.2L0 480l114.7-30.1c32.4 17.7 69 27 109.2 27h.1c123.6 0 223.9-100.3 223.9-223.9 0-59.3-23.1-115-65-156zm-157 341.6h-.1c-33.4 0-66.1-8.9-94.7-25.7l-6.8-4-68.1 17.9 18.2-66.4-4.4-6.9c-18-28.7-27.5-61.9-27.5-96.2 0-98.3 80-178.3 178.4-178.3 47.7 0 92.6 18.6 126.4 52.4s52.3 78.8 52.3 126.5c0 98.2-80 178.2-178.3 178.2zm101.5-138.9c-5.5-2.8-32.8-16.1-37.9-17.9-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.5-14.3 17.9-17.6 21.5-3.2 3.7-6.5 4.1-12 .9-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2s-9.7 1.4-14.8 6.9c-5.1 5.5-19.4 19-19.4 46.3s19.9 53.7 22.6 57.4c2.8 3.7 39.1 59.8 94.8 83.8 13.2 5.7 23.5 9.1 31.5 11.7 13.2 4.2 25.3 3.6 34.8 2.2 10.6-1.6 32.8-13.4 37.4-26.3 4.6-12.9 4.6-24 3.2-26.3-1.3-2.3-5-3.7-10.5-6.5z"></path>
-      </svg>
-    </a>
-
-    <script>
-      // Keep navigation working even if data fetch/render fails.
-      (function () {
-        try {
-          var btn = document.getElementById("menuBtn");
-          var menu = document.getElementById("mobileMenu");
-          if (!btn || !menu) return;
-
-          function setOpen(open) {
-            // Don't rely on Tailwind being loaded for show/hide.
-            menu.hidden = !open;
-            menu.style.display = open ? "" : "none";
-            menu.classList.toggle("hidden", !open);
-            btn.setAttribute("aria-expanded", open ? "true" : "false");
-          }
-
-          // Ensure closed by default.
-          setOpen(false);
-
-          btn.addEventListener("click", function () {
-            var open = btn.getAttribute("aria-expanded") === "true";
-            setOpen(!open);
-          });
-
-          // Close on Escape
-          document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape") setOpen(false);
-          });
-
-          // Close when clicking a nav link
-          menu.addEventListener("click", function (e) {
-            var a = e.target && e.target.closest ? e.target.closest("a") : null;
-            if (a) setOpen(false);
-          });
-        } catch (e) {
-          // no-op
-        }
-      })();
-
-      // Tabs (News / Articles) - minimal JS
-      (function () {
-        try {
-          var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab-btn"));
-          var panels = {
-            news: document.getElementById("tabPanelNews"),
-            articles: document.getElementById("tabPanelArticles"),
-          };
-
-          function activate(name) {
-            tabs.forEach(function (t) {
-              var isActive = t.getAttribute("data-tab") === name;
-              t.setAttribute("aria-selected", isActive ? "true" : "false");
-              t.className =
-                "tab-btn min-h-[44px] rounded-xl border border-slate-200 px-3 text-sm font-extrabold focus:outline-none focus:ring-2 focus:ring-sky-500 " +
-                (isActive ? "bg-slate-900 text-white" : "bg-white text-slate-900");
-            });
-            Object.keys(panels).forEach(function (k) {
-              if (!panels[k]) return;
-              panels[k].classList.toggle("hidden", k !== name);
-            });
-          }
-
-          tabs.forEach(function (t) {
-            t.addEventListener("click", function () {
-              activate(t.getAttribute("data-tab"));
-            });
-          });
-
-          activate("news");
-        } catch (e) {
-          // no-op
-        }
-      })();
-
-      (function () {
-        try {
-        var debug = document.getElementById("mobileDebug");
-        function setDebug(text) {
-          if (!debug) return;
-          debug.textContent = text;
-          debug.classList.remove("hidden");
-        }
-        setDebug("JS loaded. Fetching content...");
-
-        // Hide broken images to avoid ugly broken icons.
-        (function () {
-          var logo = document.getElementById("siteLogo");
-          if (logo) logo.addEventListener("error", function () { logo.style.display = "none"; });
-          var hero = document.getElementById("heroImage");
-          if (hero) hero.addEventListener("error", function () { hero.style.display = "none"; });
-        })();
-
-        function pickLang() {
-          try {
-            return (localStorage.getItem("lang") || "en") === "ar" ? "ar" : "en";
-          } catch (e) {
-            return "en";
-          }
-        }
-        function i18n(v) {
-          var lang = pickLang();
-          if (v == null) return "";
-          if (typeof v === "string" || typeof v === "number") return String(v);
-          if (typeof v === "object") return String(v[lang] || v.en || v.ar || "");
-          return "";
-        }
-        function escapeHtml(s) {
-          return String(s == null ? "" : s)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/\"/g, "&quot;");
-        }
-        function toEmbedUrl(url) {
-          var raw = String(url || "").trim();
-          if (!raw) return "";
-          if (/youtube\.com\/watch\?v=/i.test(raw)) {
-            var id = (raw.split("v=")[1] || "").split("&")[0];
-            return id ? "https://www.youtube-nocookie.com/embed/" + id : "";
-          }
-          if (/youtu\.be\//i.test(raw)) {
-            var id2 = (raw.split("youtu.be/")[1] || "").split(/[?&]/)[0];
-            return id2 ? "https://www.youtube-nocookie.com/embed/" + id2 : "";
-          }
-          var vm = (raw.match(/vimeo\.com\/(\d+)/i) || [])[1];
-          if (vm) return "https://player.vimeo.com/video/" + vm;
-          if (/facebook\.com\//i.test(raw)) {
-            return "https://www.facebook.com/plugins/video.php?href=" + encodeURIComponent(raw) + "&show_text=false";
-          }
-          if (/youtube\.com\/embed\//i.test(raw) || /youtube-nocookie\.com\/embed\//i.test(raw) || /player\.vimeo\.com\/video\//i.test(raw) || /facebook\.com\/plugins\/video\.php/i.test(raw)) {
-            return raw;
-          }
-          return "";
-        }
-
-        function fetchJson(url, timeoutMs) {
-          timeoutMs = timeoutMs || 12000;
-          if (typeof AbortController === "undefined") {
-            // Older browsers: no timeout support, but keep the page functional.
-            return fetch(url, { headers: { Accept: "application/json" } }).then(function (r) {
-              if (!r.ok) throw new Error("Request failed (" + r.status + ")");
-              return r.json();
-            });
-          }
-          var ctrl = new AbortController();
-          var t = setTimeout(function () { ctrl.abort(); }, timeoutMs);
-          return fetch(url, { headers: { Accept: "application/json" }, signal: ctrl.signal })
-            .then(function (r) {
-              clearTimeout(t);
-              if (!r.ok) throw new Error("Request failed (" + r.status + ")");
-              return r.json();
-            });
-        }
-
-        function renderServices(services) {
-          var row = document.getElementById("servicesRow");
-          if (!row) return;
-          var list = Array.isArray(services) ? services : [];
-          if (!list.length) {
-            row.innerHTML = '<article class="min-w-[78%] snap-start rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:min-w-[55%]" role="listitem"><h3 class="text-base font-extrabold text-slate-900">No services yet</h3><p class="mt-2 text-sm leading-6 text-slate-600">Publish services from the dashboard.</p></article>';
-            return;
-          }
-          row.innerHTML = list
-            .map(function (s) {
-              return (
-                '<article class="min-w-[78%] snap-start rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:min-w-[55%]" role="listitem">' +
-                '<h3 class="text-base font-extrabold text-slate-900">' + escapeHtml(i18n(s.title)) + "</h3>" +
-                '<p class="mt-2 text-sm leading-6 text-slate-600">' + escapeHtml(i18n(s.description)) + "</p>" +
-                "</article>"
-              );
-            })
-            .join("");
-        }
-
-        function renderDoctors(experts) {
-          var row = document.getElementById("doctorsRow");
-          if (!row) return;
-          var list = Array.isArray(experts) ? experts.filter(function (x) { return x && x.visible !== false; }) : [];
-          if (!list.length) {
-            row.innerHTML = '<article class="min-w-[86%] snap-start rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:min-w-[60%]"><h3 class="text-base font-extrabold text-slate-900">No doctors yet</h3><p class="mt-2 text-sm leading-6 text-slate-600">Publish doctors from the dashboard.</p></article>';
-            return;
-          }
-          row.innerHTML = list
-            .map(function (d) {
-              var img = d.imageUrl ? String(d.imageUrl) : "";
-              return (
-                '<article class="min-w-[86%] snap-start rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:min-w-[60%]">' +
-                '<div class="flex items-center gap-3">' +
-                (img
-                  ? '<img src="' + escapeHtml(img) + '" alt="' + escapeHtml(d.name || "Doctor") + '" class="h-14 w-14 rounded-2xl border border-slate-200 bg-slate-100 object-cover" loading="lazy" />'
-                  : '<div class="h-14 w-14 rounded-2xl border border-slate-200 bg-slate-100"></div>') +
-                '<div class="min-w-0">' +
-                '<h3 class="truncate text-base font-extrabold text-slate-900">' + escapeHtml(d.name || "") + "</h3>" +
-                '<p class="truncate text-sm font-semibold text-sky-700">' + escapeHtml(d.title || "") + "</p>" +
-                "</div></div>" +
-                (d.bio ? '<p class="mt-3 text-sm leading-6 text-slate-600">' + escapeHtml(d.bio) + "</p>" : "") +
-                "</article>"
-              );
-            })
-            .join("");
-        }
-
-        function renderPosts(panelId, items, emptyLabel) {
-          var panel = document.getElementById(panelId);
-          if (!panel) return;
-          if (!items || !items.length) {
-            panel.innerHTML = '<div class="rounded-2xl border border-slate-200 p-4 text-sm text-slate-600">' + escapeHtml(emptyLabel) + "</div>";
-            return;
-          }
-          panel.innerHTML = items
-            .map(function (p) {
-              return (
-                '<article class="rounded-2xl border border-slate-200 p-4">' +
-                '<h3 class="text-base font-extrabold text-slate-900">' + escapeHtml(p.title || "") + "</h3>" +
-                '<p class="mt-2 text-sm leading-6 text-slate-600">' + escapeHtml(p.excerpt || "") + "</p>" +
-                '<a href="/posts/' + encodeURIComponent(p.slug) + '" class="mt-3 inline-flex min-h-[44px] items-center justify-center rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500">Read</a>' +
-                "</article>"
-              );
-            })
-            .join("");
-        }
-
-        function digitsOnly(value) {
-          return String(value || "").replace(/\D+/g, "");
-        }
-
-        function buildWhatsAppUrl(phone, message) {
-          var digits = digitsOnly(phone);
-          if (!digits) return "#";
-          return "https://wa.me/" + digits + "?text=" + encodeURIComponent(String(message || "").trim());
-        }
-
-        function applyContactSettings(c) {
-          var settings = (c && c.contactSettings) || {};
-          var contact = (c && c.contact) || {};
-          var supportNumber = i18n(settings.immediateSupportNumber) || i18n(contact.emergencyPhone) || i18n(contact.phone) || "";
-          var welcomeMessage = i18n(settings.whatsappWelcomeMessage) || "Hello, I would like to speak with your support team.";
-          var widget = document.getElementById("whatsappWidget");
-          if (!widget) return;
-          widget.setAttribute("href", buildWhatsAppUrl(supportNumber, welcomeMessage));
-          widget.style.display = digitsOnly(supportNumber) ? "inline-flex" : "none";
-        }
-
-        function applyContent(c) {
-          if (!c) return;
-          // Title + tagline
-          var title = i18n(c.siteInfo && c.siteInfo.title) || "Comprehensive Cancer Center";
-          document.title = title;
-
-          var logo = document.getElementById("siteLogo");
-          var logoName = document.getElementById("siteLogoName");
-          var logoUrl = c.siteInfo ? i18n(c.siteInfo.logoUrl) : "";
-          var siteTitle = i18n(c.siteInfo && c.siteInfo.title) || "Comprehensive Cancer Center";
-          var logoLabel = i18n(c.siteInfo && c.siteInfo.logoName) || siteTitle;
-          if (logo && logoUrl) {
-            logo.setAttribute("src", String(logoUrl));
-            logo.setAttribute("alt", logoLabel + " logo");
-          }
-          if (logoName) logoName.textContent = logoLabel;
-          if (logoUrl) {
-            document
-              .querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]')
-              .forEach(function (linkEl) { linkEl.setAttribute("href", String(logoUrl)); });
-            if (!document.querySelector('link[rel="icon"]')) {
-              var iconLink = document.createElement("link");
-              iconLink.setAttribute("rel", "icon");
-              iconLink.setAttribute("type", "image/png");
-              iconLink.setAttribute("href", String(logoUrl));
-              document.head.appendChild(iconLink);
+        <script>
+          (function () {
+            var menuBtn = document.getElementById("menuBtn");
+            var menu = document.getElementById("mobileMenu");
+            if (!menuBtn || !menu) return;
+            function setOpen(open) {
+              menu.style.display = open ? "block" : "none";
+              menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
             }
-          }
-
-          var heroImg = document.getElementById("heroImage");
-          var heroUrl = c.siteInfo ? i18n(c.siteInfo.heroImageUrl) : "";
-          if (heroImg && heroUrl) {
-            heroImg.setAttribute("src", String(heroUrl));
-            heroImg.setAttribute("alt", title + " hero image");
-          }
-
-          var heroKicker = document.getElementById("heroKicker");
-          if (heroKicker) {
-            var tagline = i18n(c.siteInfo && c.siteInfo.tagline);
-            if (tagline) {
-              // Safer than mutating text nodes (whitespace can vary).
-              heroKicker.innerHTML =
-                '<span class="h-2 w-2 rounded-full bg-sky-500" aria-hidden="true"></span> ' +
-                escapeHtml(tagline);
-            }
-          }
-
-          var h = document.getElementById("heroHeading");
-          if (h) h.textContent = i18n(c.siteInfo && c.siteInfo.heroHeading) || h.textContent;
-
-          var sub = i18n(c.siteInfo && c.siteInfo.heroSubheading);
-          if (sub && h) h.textContent = (i18n(c.siteInfo && c.siteInfo.heroHeading) || "") + " " + sub;
-
-          var desc = document.getElementById("heroDescription");
-          if (desc) desc.textContent = i18n(c.siteInfo && c.siteInfo.heroDescription) || desc.textContent;
-
-          var cta1 = document.getElementById("heroCtaPrimary");
-          if (cta1) cta1.textContent = i18n(c.siteInfo && c.siteInfo.heroCtaPrimary) || cta1.textContent;
-          var cta2 = document.getElementById("heroCtaSecondary");
-          if (cta2) cta2.textContent = i18n(c.siteInfo && c.siteInfo.heroCtaSecondary) || cta2.textContent;
-
-          // Stats
-          if (c.stats) {
-            var patients = document.getElementById("statPatients");
-            if (patients && c.stats.patientsServed != null) patients.textContent = String(c.stats.patientsServed) + "+";
-            var success = document.getElementById("statSuccess");
-            if (success && c.stats.successRate != null) success.textContent = String(c.stats.successRate) + "%";
-            var specs = document.getElementById("statSpecialists");
-            if (specs && c.stats.specialists != null) specs.textContent = String(c.stats.specialists) + "+";
-          }
-
-          // Reinforce dir/lang on <html> after content loads (ensures CSS [dir] selectors are correct)
-          var _lang = pickLang();
-          document.documentElement.setAttribute('dir', _lang === 'ar' ? 'rtl' : 'ltr');
-          document.documentElement.setAttribute('lang', _lang === 'ar' ? 'ar' : 'en');
-          document.documentElement.classList.remove('lang-ar', 'lang-en');
-          document.documentElement.classList.add('lang-' + _lang);
-
-          // Services + doctors
-          renderServices(c.services);
-          renderDoctors(c.experts);
-
-          // Video
-          var vurl = i18n(c.aboutSection && c.aboutSection.videoUrl);
-          var embed = toEmbedUrl(vurl);
-          var isDirectFile = !embed && vurl && /\.(mp4|webm|ogv|ogg|mov|m4v)(\?|$)/i.test(vurl);
-          var vFrame = document.getElementById("videoFrame");
-          var vFile  = document.getElementById("videoFilePlayer");
-          var videoTitle = document.getElementById("videoTitle");
-          var overviewTitle = i18n(c.aboutSection && c.aboutSection.videoTitle) || i18n(c.aboutSection && c.aboutSection.heading) || "Center Overview";
-          if (videoTitle) videoTitle.textContent = overviewTitle;
-          var videoSubtitle = document.getElementById("videoSubtitle");
-          var overviewSubtitle = i18n(c.aboutSection && c.aboutSection.videoSubtitle);
-          if (videoSubtitle && overviewSubtitle) videoSubtitle.textContent = overviewSubtitle;
-          if (isDirectFile && vFile && vFrame) {
-            vFile.setAttribute("src", vurl);
-            vFile.setAttribute("title", overviewTitle + " Video");
-            vFile.style.display = "";
-            vFrame.style.display = "none";
-          } else if (embed && vFrame) {
-            vFrame.setAttribute("src", embed);
-            vFrame.setAttribute("title", overviewTitle + " Video");
-            vFrame.style.display = "";
-            if (vFile) vFile.style.display = "none";
-          }
-          applyContactSettings(c);
-        }
-
-        function loadAll() {
-          fetchJson("/api/public/content", 12000)
-            .then(function (content) {
-              applyContent(content);
-              setDebug("Content loaded.");
-            })
-            .catch(function (e) {
-              setDebug("Content load failed: " + (e && e.message ? e.message : "unknown error"));
+            setOpen(false);
+            menuBtn.addEventListener("click", function () {
+              setOpen(menuBtn.getAttribute("aria-expanded") !== "true");
             });
-
-          // Posts
-          fetchJson("/api/posts?type=news&limit=4&page=1", 12000)
-            .then(function (d) {
-              renderPosts("tabPanelNews", (d && d.items) || [], "No news yet. Publish posts from dashboard.");
-            })
-            .catch(function () {
-              renderPosts("tabPanelNews", [], "Unable to load news right now.");
+            menu.addEventListener("click", function (e) {
+              if (e.target && e.target.closest("a")) setOpen(false);
             });
-
-          fetchJson("/api/posts?type=article&limit=4&page=1", 12000)
-            .then(function (d) {
-              renderPosts("tabPanelArticles", (d && d.items) || [], "No articles yet. Publish posts from dashboard.");
-            })
-            .catch(function () {
-              renderPosts("tabPanelArticles", [], "Unable to load articles right now.");
+            document.addEventListener("keydown", function (e) {
+              if (e.key === "Escape") setOpen(false);
             });
-        }
+          })();
 
-        // Contact form submit (stays on-page, shows message)
-        (function () {
-          var form = document.getElementById("contactForm");
-          var status = document.getElementById("contactStatus");
-          if (!form || !status) return;
-
-          function setStatus(text) {
-            status.textContent = text;
-            status.classList.remove("hidden");
-          }
-
-          form.addEventListener("submit", function (e) {
-            e.preventDefault();
-            status.classList.add("hidden");
-
-            var payload = {
-              firstName: (document.getElementById("firstName").value || "").trim(),
-              lastName: (document.getElementById("lastName").value || "").trim(),
-              email: (document.getElementById("email").value || "").trim(),
-              phone: (document.getElementById("phone").value || "").trim(),
-              concern: (document.getElementById("concern").value || "").trim(),
-              message: (document.getElementById("message").value || "").trim(),
-            };
-
-            if (!payload.firstName || !payload.lastName || !payload.email || !payload.phone || !payload.concern) {
-              setStatus("Please fill the required fields.");
+          (function () {
+            var items = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+            if (!items.length) return;
+            if (!("IntersectionObserver" in window)) {
+              items.forEach(function (el) { el.classList.add("is-visible"); });
               return;
             }
-
-            fetch("/api/contacts", {
-              method: "POST",
-              headers: { "Content-Type": "application/json", Accept: "application/json" },
-              body: JSON.stringify(payload),
-            })
-              .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j, s: r.status }; }); })
-              .then(function (out) {
-                if (!out.ok) throw new Error(out.j && out.j.error ? out.j.error : "Submission failed (" + out.s + ")");
-                setStatus(out.j && out.j.message ? out.j.message : "Submitted. We will contact you soon.");
-                form.reset();
-              })
-              .catch(function (err) {
-                setStatus(err && err.message ? err.message : "Unable to submit. Please try again.");
+            var obs = new IntersectionObserver(function (entries) {
+              entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("is-visible");
+                obs.unobserve(entry.target);
               });
-          });
-        })();
+            }, { threshold: 0.12 });
+            items.forEach(function (el) { obs.observe(el); });
+          })();
 
-        loadAll();
-        } catch (e) {
-          // If anything fails here, keep navbar + tabs working.
-        }
-      })();
-    </script>
-    <script src="/js/site-theme-manager.js"></script>
-    <script src="/js/zoom.js?v=20260409"></script>
-    </div>
+          (function () {
+            var counters = Array.prototype.slice.call(document.querySelectorAll("[data-count]"));
+            if (!counters.length) return;
+            function animate(el) {
+              var target = Number(el.getAttribute("data-count") || 0);
+              var suffix = el.getAttribute("data-suffix") || "";
+              var duration = 1400;
+              var started = performance.now();
+              function frame(now) {
+                var p = Math.min((now - started) / duration, 1);
+                p = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * p) + suffix;
+                if (p < 1) requestAnimationFrame(frame);
+              }
+              requestAnimationFrame(frame);
+            }
+            if (!("IntersectionObserver" in window)) {
+              counters.forEach(animate);
+              return;
+            }
+            var obs = new IntersectionObserver(function (entries) {
+              entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                animate(entry.target);
+                obs.unobserve(entry.target);
+              });
+            }, { threshold: 0.35 });
+            counters.forEach(function (el) { obs.observe(el); });
+          })();
+
+          (function () {
+            function i18n(v) {
+              var lang = "en";
+              try { lang = (localStorage.getItem("lang") || "en") === "ar" ? "ar" : "en"; } catch (e) {}
+              if (v == null) return "";
+              if (typeof v === "string" || typeof v === "number") return String(v);
+              if (typeof v === "object") return String(v[lang] || v.en || v.ar || "");
+              return "";
+            }
+            function escapeHtml(value) {
+              return String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+            }
+            function fetchJson(url, timeoutMs) {
+              timeoutMs = timeoutMs || 12000;
+              if (typeof AbortController === "undefined") {
+                return fetch(url, { headers: { Accept: "application/json" } }).then(function (r) { if (!r.ok) throw new Error("Request failed (" + r.status + ")"); return r.json(); });
+              }
+              var ctrl = new AbortController();
+              var timeout = setTimeout(function () { ctrl.abort(); }, timeoutMs);
+              return fetch(url, { headers: { Accept: "application/json" }, signal: ctrl.signal }).then(function (r) { clearTimeout(timeout); if (!r.ok) throw new Error("Request failed (" + r.status + ")"); return r.json(); });
+            }
+            function digitsOnly(value) { return String(value || "").replace(/\D+/g, ""); }
+            function buildWhatsAppUrl(phone, message) {
+              var digits = digitsOnly(phone);
+              if (!digits) return "#";
+              return "https://wa.me/" + digits + "?text=" + encodeURIComponent(String(message || "").trim());
+            }
+            function formatDate(iso) {
+              var d = new Date(iso);
+              if (Number.isNaN(d.getTime())) return "";
+              return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+            }
+            function readTime(text) {
+              var words = String(text || "").trim().split(/\s+/).filter(Boolean).length;
+              var mins = Math.max(2, Math.ceil(words / 220));
+              return mins + " min read";
+            }
+            function renderServices(services) {
+              var row = document.getElementById("servicesRow");
+              if (!row) return;
+              var list = Array.isArray(services) ? services : [];
+              if (!list.length) {
+                row.innerHTML = '<article class="service-card"><h3>No services published yet</h3><p>Publish services in the dashboard to display treatment highlights.</p><a class="service-link" href="#consultation">Learn More -></a></article>';
+                return;
+              }
+              row.innerHTML = list.map(function (s) {
+                return '<article class="service-card" role="listitem"><span class="service-icon" aria-hidden="true">+</span><h3 style="margin-top:12px;color:#0a396d;">' + escapeHtml(i18n(s.title)) + '</h3><p>' + escapeHtml(i18n(s.description)) + '</p><a class="service-link" href="#consultation">Learn More -></a></article>';
+              }).join("");
+            }
+            function renderNews(items) {
+              var panel = document.getElementById("tabPanelNews");
+              if (!panel) return;
+              if (!items || !items.length) {
+                panel.innerHTML = '<article class="news-card"><div class="news-content"><h3>No posts available yet</h3><p>Publish news and educational articles from the dashboard.</p></div></article>';
+                return;
+              }
+              panel.innerHTML = items.map(function (p) {
+                var media = p.featuredImage
+                  ? '<img src="' + escapeHtml(p.featuredImage) + '" alt="' + escapeHtml(p.title || "Post image") + '" loading="lazy" />'
+                  : '<img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=75" alt="Healthcare article" loading="lazy" />';
+                var category = escapeHtml((p.type || "News").toUpperCase());
+                var meta = [formatDate(p.createdAt), readTime(p.excerpt || p.content || "")].filter(Boolean).join("  |  ");
+                return '<article class="news-card"><div class="news-media">' + media + '</div><div class="news-content"><span class="news-tag">' + category + '</span><h3 style="margin-top:10px;color:#083a6f;">' + escapeHtml(p.title || "") + '</h3><p style="margin-top:8px;">' + escapeHtml(p.excerpt || "") + '</p><p class="news-meta">' + escapeHtml(meta) + '</p><a class="service-link" href="/posts/' + encodeURIComponent(p.slug) + '">Read More -></a></div></article>';
+              }).join("");
+            }
+            function applyContent(c) {
+              if (!c) return;
+              var title = i18n(c.siteInfo && c.siteInfo.title) || "Comprehensive Cancer Center";
+              document.title = title;
+              var logo = document.getElementById("siteLogo");
+              var logoName = document.getElementById("siteLogoName");
+              var defaultLogo = "/uploads/img-1770765094009-eigrur.jpg";
+              var logoUrl = c.siteInfo ? i18n(c.siteInfo.logoUrl) : "";
+              var logoLabel = i18n(c.siteInfo && c.siteInfo.logoName) || title;
+              if (logo) {
+                logo.src = logoUrl ? String(logoUrl) : defaultLogo;
+                logo.alt = logoLabel + " logo";
+                logo.onerror = function () {
+                  this.onerror = null;
+                  this.src = defaultLogo;
+                };
+              }
+              if (logoName) logoName.textContent = logoLabel;
+              var hero = document.getElementById("heroImage");
+              var heroUrl = c.siteInfo ? i18n(c.siteInfo.heroImageUrl) : "";
+              if (hero && heroUrl) hero.src = String(heroUrl);
+              var aboutImage = document.getElementById("aboutImage");
+              if (aboutImage && heroUrl) aboutImage.src = String(heroUrl);
+              var kicker = document.getElementById("heroKicker");
+              var heading = document.getElementById("heroHeading");
+              var desc = document.getElementById("heroDescription");
+              if (kicker) kicker.textContent = i18n(c.siteInfo && c.siteInfo.tagline) || kicker.textContent;
+              if (heading) heading.textContent = i18n(c.siteInfo && c.siteInfo.heroHeading) || heading.textContent;
+              if (desc) desc.textContent = i18n(c.siteInfo && c.siteInfo.heroDescription) || desc.textContent;
+              var cta1 = document.getElementById("heroCtaPrimary");
+              var cta2 = document.getElementById("heroCtaSecondary");
+              if (cta1) cta1.textContent = i18n(c.siteInfo && c.siteInfo.heroCtaPrimary) || cta1.textContent;
+              if (cta2) cta2.textContent = i18n(c.siteInfo && c.siteInfo.heroCtaSecondary) || cta2.textContent;
+              if (c.stats) {
+                var patients = document.getElementById("statPatients");
+                var success = document.getElementById("statSuccess");
+                var specialists = document.getElementById("statSpecialists");
+                if (patients && c.stats.patientsServed != null) { patients.setAttribute("data-count", String(c.stats.patientsServed)); patients.textContent = String(c.stats.patientsServed) + "+"; }
+                if (success && c.stats.successRate != null) { success.setAttribute("data-count", String(c.stats.successRate)); success.textContent = String(c.stats.successRate) + "%"; }
+                if (specialists && c.stats.specialists != null) { specialists.setAttribute("data-count", String(c.stats.specialists)); specialists.textContent = String(c.stats.specialists) + "+"; }
+              }
+              renderServices(c.services);
+              var contact = c.contact || {};
+              var settings = c.contactSettings || {};
+              var support = i18n(settings.immediateSupportNumber) || i18n(contact.phone) || i18n(contact.emergencyPhone) || "";
+              var welcome = i18n(settings.whatsappWelcomeMessage) || "Hello, I would like to request a consultation.";
+              var wa = document.getElementById("whatsappWidget");
+              if (wa) { wa.href = buildWhatsAppUrl(support, welcome); wa.style.display = digitsOnly(support) ? "inline-flex" : "none"; }
+            }
+            fetchJson("/api/public/content", 12000).then(applyContent).catch(function () {});
+            fetchJson("/api/posts?type=news&limit=6&page=1", 12000).then(function (data) { renderNews((data && data.items) || []); }).catch(function () { renderNews([]); });
+
+            var form = document.getElementById("contactForm");
+            var status = document.getElementById("contactStatus");
+            var step = 1;
+            var panes = Array.prototype.slice.call(document.querySelectorAll(".step-pane"));
+            var prevBtn = document.getElementById("prevStep");
+            var nextBtn = document.getElementById("nextStep");
+            var submitBtn = document.getElementById("submitStep");
+            var stepLabel = document.getElementById("stepLabel");
+            var stepLabels = {
+              1: "Step 1 of 3: Contact details",
+              2: "Step 2 of 3: Medical concern",
+              3: "Step 3 of 3: Review and submit"
+            };
+            function setStatus(text) { if (!status) return; status.style.display = "block"; status.textContent = text; }
+            function updateStepUI() {
+              panes.forEach(function (pane) { pane.classList.toggle("is-active", Number(pane.getAttribute("data-step")) === step); });
+              [1, 2, 3].forEach(function (i) { var dot = document.getElementById("dot" + i); if (dot) dot.classList.toggle("is-active", i === step); });
+              if (stepLabel) stepLabel.textContent = stepLabels[step] || "";
+              prevBtn.style.visibility = step === 1 ? "hidden" : "visible";
+              nextBtn.style.display = step < 3 ? "inline-flex" : "none";
+              submitBtn.style.display = step === 3 ? "inline-flex" : "none";
+            }
+            function validateStep(s) {
+              function req(id) { var el = document.getElementById(id); return el && String(el.value || "").trim(); }
+              if (s === 1 && (!req("firstName") || !req("lastName") || !req("email") || !req("phone"))) { setStatus("Please complete all required personal information."); return false; }
+              if (s === 2 && !req("concern")) { setStatus("Please select your primary concern."); return false; }
+              return true;
+            }
+            if (nextBtn) nextBtn.addEventListener("click", function () { if (!validateStep(step)) return; if (step < 3) step += 1; if (status) status.style.display = "none"; updateStepUI(); });
+            if (prevBtn) prevBtn.addEventListener("click", function () { if (step > 1) step -= 1; if (status) status.style.display = "none"; updateStepUI(); });
+            if (form) {
+              form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                if (!validateStep(1) || !validateStep(2)) return;
+                var medicalDetails = (document.getElementById("medicalDetails").value || "").trim();
+                var payload = {
+                  firstName: (document.getElementById("firstName").value || "").trim(),
+                  lastName: (document.getElementById("lastName").value || "").trim(),
+                  email: (document.getElementById("email").value || "").trim(),
+                  phone: (document.getElementById("phone").value || "").trim(),
+                  concern: (document.getElementById("concern").value || "").trim(),
+                  message: medicalDetails || "Consultation request submitted from homepage form.",
+                };
+                fetch("/api/contacts", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload) })
+                  .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, status: r.status, body: j }; }); })
+                  .then(function (out) {
+                    if (!out.ok) throw new Error((out.body && out.body.error) || "Submission failed (" + out.status + ")");
+                    setStatus((out.body && out.body.message) || "Submitted successfully. Our team will contact you shortly.");
+                    form.reset();
+                    step = 1;
+                    updateStepUI();
+                  })
+                  .catch(function (err) { setStatus((err && err.message) || "Unable to submit. Please try again."); });
+              });
+            }
+            updateStepUI();
+          })();
+        </script>
+
+        <script src="/js/site-theme-manager.js?v=beb6a86f"></script>
+        <script src="/js/zoom.js?v=f6bb3bb8"></script>
+      </div>
     </div>
   </body>
 </html>

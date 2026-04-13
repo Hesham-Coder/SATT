@@ -49,10 +49,18 @@
     wrapper.style.display = "block";
     wrapper.style.marginLeft = "auto";
     wrapper.style.marginRight = "auto";
-    wrapper.style.transformOrigin = "top center";
-    wrapper.style.transform = "scale(" + nextScale + ")";
-    wrapper.style.width = formatUnit(100 / nextScale) + "%";
-    wrapper.style.minHeight = nextScale < 1 ? formatUnit(100 / nextScale) + "vh" : "100vh";
+
+    if (Math.abs(nextScale - 1) < 0.001) {
+      wrapper.style.transformOrigin = "top center";
+      wrapper.style.transform = "none";
+      wrapper.style.width = "100%";
+      wrapper.style.minHeight = "100vh";
+    } else {
+      wrapper.style.transformOrigin = "top center";
+      wrapper.style.transform = "scale(" + nextScale + ")";
+      wrapper.style.width = formatUnit(100 / nextScale) + "%";
+      wrapper.style.minHeight = nextScale < 1 ? formatUnit(100 / nextScale) + "vh" : "100vh";
+    }
 
     // Guard rail: if scaled content exceeds viewport width, reduce to the largest safe scale.
     if (nextScale > 1) {

@@ -204,7 +204,7 @@
       "en": "Providing coordinated, guideline-based cancer care with an emphasis on clear communication, safety, and support for patients and families.",
       "ar": "نقدم رعاية منسقة قائمة على الإرشادات العلمية مع التركيز على وضوح المعلومات وسلامة المريض ودعم الأسرة."
     },
-    "videoUrl": "https://www.facebook.com/cccofegypt/videos/8113161795385494",
+    "videoUrl": "https://www.youtube.com/watch?v=F8zqVO8UqTM",
     "videoTitle": {
       "en": "Center Overview",
       "ar": "Center Overview"
@@ -243,6 +243,8 @@
     }
   },
   "sectionsOrder": [
+    "hero3",
+    "hero2",
     "hero",
     "services",
     "about",
@@ -266,7 +268,9 @@
     "news": true,
     "updates": true,
     "articles": true,
-    "certificates": true
+    "certificates": true,
+    "hero2": false,
+    "hero3": false
   },
   "contactSection": {
     "heading": {
@@ -453,7 +457,7 @@
       "profileCtaLabel": "",
       "profileCtaLink": "#contact",
       "icon": "radiology",
-      "visible": true
+      "visible": false
     },
     {
       "name": "أ.د/ أحمد عاشور",
@@ -465,7 +469,7 @@
       "profileCtaLabel": "",
       "profileCtaLink": "#contact",
       "icon": "medical_services",
-      "visible": true
+      "visible": false
     },
     {
       "imageUrl": "/uploads/img-1770996997511-0v9vgq.jpg",
@@ -475,7 +479,7 @@
       "profileCtaLabel": "",
       "profileCtaLink": "#contact",
       "icon": "surgical",
-      "visible": true,
+      "visible": false,
       "name": "أ.د/ أحمد الجويلي",
       "title": "أستاذ علاج الأورام كلية الطب جامعة الاسكندرية وعضو الجمعية الأمريكية لعلاج الأورام."
     }
@@ -569,5 +573,49 @@
       "ar": "الاعتمادات ومعايير الجودة التي نحرص على الالتزام بها."
     }
   },
-  "certificates": []
+  "certificates": [],
+  "hero2Section": {
+    "heading": {
+      "en": "Page sections",
+      "ar": ""
+    },
+    "subheading": {
+      "en": "Page sections",
+      "ar": ""
+    },
+    "description": {
+      "en": "Page sections",
+      "ar": ""
+    },
+    "ctaPrimary": {
+      "en": "Page sections",
+      "ar": ""
+    },
+    "ctaSecondary": {
+      "en": "Page sections",
+      "ar": ""
+    }
+  },
+  "hero3Section": {
+    "heading": {
+      "en": "Page sections Page sections",
+      "ar": ""
+    },
+    "subheading": {
+      "en": "Page sections",
+      "ar": ""
+    },
+    "description": {
+      "en": "Page sections",
+      "ar": ""
+    },
+    "ctaPrimary": {
+      "en": "Page sections",
+      "ar": ""
+    },
+    "ctaSecondary": {
+      "en": "Page sections",
+      "ar": ""
+    }
+  }
 }

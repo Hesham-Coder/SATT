@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+.next/
 
 # Environment variables
 .env
@@ -34,3 +35,12 @@ desktop.ini
 
 # PM2
 .pm2/
+
+# Next.js
+next-env.d.ts
+tsconfig.tsbuildinfo
+
+# Test artifacts
+test-results/
+playwright-report/
+.lighthouse-report.json

@@ -876,6 +876,8 @@
 
             var sectionLabels = {
                 hero: 'Hero',
+                hero2: 'Hero 2 (Overlay)',
+                hero3: 'Hero 3 (Minimal)',
                 services: 'Services',
                 team: 'Team',
                 testimonials: 'Testimonials',
@@ -951,11 +953,19 @@
                 if (!c.contactSettings.whatsappWelcomeMessage) c.contactSettings.whatsappWelcomeMessage = 'Hello, I would like to speak with your support team.';
                 c.contact.phone = c.contactSettings.primaryNavbarNumber;
                 c.contact.emergencyPhone = c.contactSettings.immediateSupportNumber;
-                if (!c.sectionsOrder) c.sectionsOrder = ['hero', 'services', 'team', 'testimonials', 'news', 'updates', 'articles', 'about', 'certificates', 'contact', 'cta'];
+                if (!c.sectionsOrder) c.sectionsOrder = ['hero', 'hero2', 'hero3', 'services', 'team', 'testimonials', 'news', 'updates', 'articles', 'about', 'certificates', 'contact', 'cta'];
                 if (!c.sectionVisibility) {
                     c.sectionVisibility = {};
                     c.sectionsOrder.forEach(function(id) { c.sectionVisibility[id] = true; });
                 }
+                ['hero2', 'hero3'].forEach(function(id) {
+                    if (!c.sectionsOrder.includes(id)) {
+                        var heroIndex = c.sectionsOrder.indexOf('hero');
+                        if (heroIndex >= 0) c.sectionsOrder.splice(heroIndex + 1, 0, id);
+                        else c.sectionsOrder.unshift(id);
+                    }
+                    if (c.sectionVisibility[id] === undefined) c.sectionVisibility[id] = true;
+                });
                 if (c.sectionVisibility.testimonials === undefined) c.sectionVisibility.testimonials = true;
                 if (!c.sectionsOrder.includes('testimonials')) {
                     var aboutIndex = c.sectionsOrder.indexOf('about');
@@ -1881,6 +1891,20 @@
                         { key: 'siteInfo.heroCtaPrimary', label: 'Primary button', bilingual: true },
                         { key: 'siteInfo.heroCtaSecondary', label: 'Secondary button', bilingual: true }
                     ]},
+                    { id: 'hero2', label: 'Hero 2 (Overlay Style)', fields: [
+                        { key: 'hero2Section.heading', label: 'Heading', bilingual: true },
+                        { key: 'hero2Section.subheading', label: 'Subheading', bilingual: true },
+                        { key: 'hero2Section.description', label: 'Description', bilingual: true },
+                        { key: 'hero2Section.ctaPrimary', label: 'Primary button', bilingual: true },
+                        { key: 'hero2Section.ctaSecondary', label: 'Secondary button', bilingual: true }
+                    ]},
+                    { id: 'hero3', label: 'Hero 3 (Minimal Style)', fields: [
+                        { key: 'hero3Section.heading', label: 'Heading', bilingual: true },
+                        { key: 'hero3Section.subheading', label: 'Subheading', bilingual: true },
+                        { key: 'hero3Section.description', label: 'Description', bilingual: true },
+                        { key: 'hero3Section.ctaPrimary', label: 'Primary button', bilingual: true },
+                        { key: 'hero3Section.ctaSecondary', label: 'Secondary button', bilingual: true }
+                    ]},
                     { id: 'siteInfo', label: 'Site & stats', fields: [
                         { key: 'siteInfo.title', label: 'Site title', bilingual: true },
                         { key: 'siteInfo.logoName', label: 'Logo name', bilingual: true },
@@ -2222,9 +2246,9 @@
                     xhrUploadJson('/api/admin/restore', fd, { 'X-CSRF-Token': csrfToken }, function(pct) {
                         setStatus(pct == null ? 'Uploading...' : ('Uploading... ' + pct + '%'));
                     }).then(function() {
-                        showToast('Restore completed. Reloading...', 'success');
+                        showToast('Restore completed. Redirecting...', 'success');
                         setStatus('Done');
-                        setTimeout(function() { window.location.reload(); }, 1200);
+                        setTimeout(function() { window.location.href = '/dashboard.html'; }, 1200);
                     }).catch(function(err) {
                         showToast('Restore failed: ' + (err && err.message ? err.message : 'unknown error'), 'error');
                         setStatus('Error: ' + (err && err.message ? err.message : 'unknown error'));
@@ -3322,9 +3346,9 @@
                         });
                     })
                     .then(function(data) {
-                        restoreStatus.textContent = 'Restore completed successfully. Reloading...';
+                        restoreStatus.textContent = 'Restore completed successfully. Redirecting...';
                         showToast('Backup restored successfully', 'success');
-                        setTimeout(function() { window.location.reload(); }, 1500);
+                        setTimeout(function() { window.location.href = '/dashboard.html'; }, 1500);
                     })
                     .catch(function(err) {
                         restoreStatus.textContent = 'Error: ' + escapeHtml(err.message);

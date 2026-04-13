@@ -1,0 +1,71 @@
+<header class="site-header" id="site-header">
+  <div class="shell-container nav-container">
+    <!-- Brand -->
+    <a href="/" class="nav-brand" aria-label="{{LOGO_NAME}}">
+      <img class="nav-brand__logo" src="{{LOGO_SRC}}" alt="{{LOGO_NAME}}" loading="eager" onerror="this.onerror=null;this.src='/uploads/img-1770765094009-eigrur.jpg';" />
+      <span class="nav-brand__name">{{LOGO_NAME}}</span>
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="nav-links" aria-label="Primary">
+      <a href="/" class="nav-item" data-route="/">{{NAV_HOME}}</a>
+      <a href="/about" class="nav-item" data-route="/about">{{NAV_ABOUT}}</a>
+      <a href="/services" class="nav-item" data-route="/services">{{NAV_SERVICES}}</a>
+      <a href="/experts" class="nav-item" data-route="/experts">{{NAV_EXPERTS}}</a>
+      <a href="/events" class="nav-item" data-route="/events">{{NAV_EVENTS}}</a>
+      <a href="/media" class="nav-item" data-route="/media">{{NAV_MEDIA}}</a>
+      <a href="/contact" class="nav-item" data-route="/contact">{{NAV_CONTACT}}</a>
+    </nav>
+
+    <!-- Actions -->
+    <div class="nav-actions">
+      <button id="lang-toggle-btn" class="btn btn--sm btn--ghost hidden md:flex" type="button" aria-label="Switch language">
+        <span class="material-symbols-outlined" aria-hidden="true">translate</span>
+        <span id="lang-toggle-label">{{LANG_SWITCH_LABEL}}</span>
+      </button>
+      <a href="/contact" class="btn btn--sm btn--primary hidden md:flex">{{HEADER_CTA_LABEL}}</a>
+      
+      <!-- Mobile Toggle -->
+      <button id="mobile-menu-btn" class="nav-toggle-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer">
+        <span class="material-symbols-outlined" aria-hidden="true" style="font-size: 28px;">menu_open</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div id="mobile-menu" class="mobile-drawer" hidden>
+    <div class="mobile-drawer__backdrop" data-mobile-close="true"></div>
+    <div class="mobile-drawer__panel" role="dialog" aria-modal="true" aria-label="{{MOBILE_MENU_TITLE}}">
+      <div class="mobile-drawer__header">
+        <span class="txt-kicker" style="margin: 0;">{{MOBILE_MENU_TITLE}}</span>
+        <button class="nav-toggle-btn" type="button" data-mobile-close="true" aria-label="Close menu">
+          <span class="material-symbols-outlined" aria-hidden="true" style="font-size: 28px;">close</span>
+        </button>
+      </div>
+      
+      <nav class="mobile-drawer__nav" aria-label="Mobile primary">
+        <a href="/" data-route="/">{{NAV_HOME}}</a>
+        <a href="/about" data-route="/about">{{NAV_ABOUT}}</a>
+        <a href="/services" data-route="/services">{{NAV_SERVICES}}</a>
+        <a href="/experts" data-route="/experts">{{NAV_EXPERTS}}</a>
+        <a href="/events" data-route="/events">{{NAV_EVENTS}}</a>
+        <a href="/media" data-route="/media">{{NAV_MEDIA}}</a>
+        <a href="/insurance" data-route="/insurance">{{MOBILE_INSURANCE_LABEL}}</a>
+        <a href="/contact" data-route="/contact">{{NAV_CONTACT}}</a>
+      </nav>
+
+      <div class="mobile-drawer__footer">
+        <p style="color: var(--color-ink-500); font-size: 0.9rem; margin-bottom: 8px;">{{MOBILE_SUPPORT_LABEL}}</p>
+        <a href="tel:{{NAVBAR_PHONE}}" style="display: block; font-size: 1.25rem; font-weight: 700; color: var(--color-ink-950); margin-bottom: 24px; text-decoration: none;">{{NAVBAR_PHONE}}</a>
+        
+        <div style="display: flex; gap: 12px; flex-direction: column;">
+          <a href="/contact" class="btn btn--primary" style="width: 100%;">{{HEADER_CTA_LABEL}}</a>
+          <button id="lang-toggle-btn-mobile" class="btn btn--secondary" type="button" style="width: 100%;">
+            <span class="material-symbols-outlined" aria-hidden="true">translate</span>
+            <span>{{LANG_SWITCH_LABEL}}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

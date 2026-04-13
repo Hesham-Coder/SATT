@@ -140,9 +140,7 @@ router.get('/', async (req, res) => {
     // Read published content (has SEO-critical data: hero heading, description, etc.)
     const contentData = await readPublishedContent();
     
-    // Mobile/tablet: navigation-driven SPA
-    // Desktop: legacy long-scroll experience
-    // Mobile/tablet uses Tailwind mobile page.
+    // Mobile/tablet gets the optimized mobile template; desktop keeps full desktop experience.
     const file = isMobileOrTablet(req) ? 'mobile.html' : 'desktop.html';
     const filePath = path.join(WEBSITE_DIR, file);
     
@@ -156,7 +154,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Desktop-only legacy experience (keeps old desktop UI).
+// Desktop route serves the dedicated desktop template.
 router.get('/desktop', async (req, res) => {
   try {
     const lang = detectLanguage(req);

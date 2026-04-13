@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("editor") // "admin" or "editor"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Conference {
+  id                   String   @id @default(cuid())
+  title                String
+  titleAr              String?
+  titleEn              String?
+  description          String
+  descriptionAr        String?
+  descriptionEn        String?
+  shortDescriptionAr   String?
+  shortDescriptionEn   String?
+  fullDescription      String?
+  date                 String
+  location             String
+  locationAr           String?
+  locationEn           String?
+  categoryKey          String   @default("general")
+  categoryAr           String?
+  categoryEn           String?
+  images               String // Stored as JSON string
+  videos               String // Stored as JSON string
+  tags                 String // Legacy JSON string
+  tagsAr               String? // Stored as JSON string
+  tagsEn               String? // Stored as JSON string
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model ResearchArticle {
+  id           String   @id @default(cuid())
+  title        String
+  abstract     String
+  author       String
+  publishDate  String
+  category     String
+  content      String
+  images       String // Stored as JSON string
+  videos       String // Stored as JSON string
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id          String   @id @default("settings")
+  heroTitle   String
+  heroDesc    String
+  aboutText   String
+  updatedAt   DateTime @updatedAt
+}
