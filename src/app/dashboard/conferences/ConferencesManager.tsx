@@ -1,13 +1,18 @@
-"use client";
+﻿"use client";
 
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, DragEvent } from "react";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { IMAGE_URL_VALIDATION_ERROR, isValidImageUrl } from "@/lib/validateImage";
-import { Edit2, Plus, Trash2, Upload, Video } from "lucide-react";
+import {
+  IMAGE_URL_VALIDATION_ERROR,
+  VIDEO_URL_VALIDATION_ERROR,
+  isValidImageUrl,
+  isValidVideoUrl,
+} from "@/lib/validateImage";
+import { Edit2, Plus, Trash2, Upload, Video, X } from "lucide-react";
 
 import type { Conference, ConferenceFormValues } from "@/types/conference";
 
@@ -24,6 +29,31 @@ type StatusState = {
   message: string;
 } | null;
 
+type PendingMedia = {
+  id: string;
+  file: File;
+  previewUrl: string;
+  type: "image" | "video";
+};
+
+type FieldErrors = Partial<
+  Record<
+    | "titleAr"
+    | "titleEn"
+    | "descriptionAr"
+    | "descriptionEn"
+    | "date"
+    | "manualImage"
+    | "manualVideo",
+    string
+  >
+>;
+
+const TITLE_REQUIRED_ERROR = "Title is required";
+const DESCRIPTION_REQUIRED_ERROR = "Description is required";
+const DATE_REQUIRED_ERROR = "Date is required";
+const FRONTEND_SYNC_ERROR = "Data not synced with frontend";
+
 function createEmptyConference(): ConferenceFormValues {
   return {
     title: { ar: "", en: "" },
@@ -33,7 +63,7 @@ function createEmptyConference(): ConferenceFormValues {
     location: { ar: "", en: "" },
     category: {
       key: "general",
-      label: { ar: "عام", en: "General" },
+      label: { ar: "General", en: "General" },
     },
     images: [],
     videos: [],
@@ -56,32 +86,6 @@ function mapConferenceToForm(conference: Conference): ConferenceFormValues {
   };
 }
 
-function TextareaField({
-  label,
-  value,
-  onChange,
-  rows = 5,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  rows?: number;
-}) {
-  return (
-    <div className="space-y-[var(--space-2)]">
-      <label className="block text-[length:var(--font-size-xs)] font-[var(--font-weight-semibold)] text-[var(--color-text-secondary)]">
-        {label}
-      </label>
-      <textarea
-        className="min-h-[120px] w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-[var(--space-4)] py-[var(--space-3)] text-[length:var(--font-size-sm)] text-[var(--color-text-primary)] shadow-[var(--shadow-sm)] outline-none transition-all duration-[var(--duration-base)] ease-[var(--ease-standard)] focus:border-[var(--color-secondary)] focus:ring-4 focus:ring-[var(--color-secondary-soft)]"
-        onChange={(event) => onChange(event.target.value)}
-        rows={rows}
-        value={value}
-      />
-    </div>
-  );
-}
-
 function splitCommaValues(value: string) {
   return Array.from(
     new Set(
@@ -93,17 +97,107 @@ function splitCommaValues(value: string) {
   );
 }
 
+function TextareaField({
+  id,
+  label,
+  value,
+  onChange,
+  rows = 5,
+  error,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  rows?: number;
+  error?: string;
+}) {
+  const errorId = error ? `${id}-error` : undefined;
+
+  return (
+    <div className="space-y-[var(--space-2)]">
+      <label
+        className="block text-[length:var(--font-size-xs)] font-[var(--font-weight-semibold)] text-[var(--color-text-secondary)]"
+        htmlFor={id}
+      >
+        {label}
+      </label>
+      <textarea
+        id={id}
+        aria-invalid={Boolean(error)}
+        aria-describedby={errorId}
+        className="min-h-[120px] w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-[var(--space-4)] py-[var(--space-3)] text-[length:var(--font-size-sm)] text-[var(--color-text-primary)] shadow-[var(--shadow-sm)] outline-none transition-all duration-[var(--duration-base)] ease-[var(--ease-standard)] focus:border-[var(--color-secondary)] focus:ring-4 focus:ring-[var(--color-secondary-soft)]"
+        onChange={(event) => onChange(event.target.value)}
+        rows={rows}
+        value={value}
+      />
+      {error ? (
+        <p className="text-[length:var(--font-size-xxs)] text-[var(--color-error)]" id={errorId}>
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function formatSize(sizeInBytes: number) {
+  if (sizeInBytes < 1024 * 1024) {
+    return `${Math.round(sizeInBytes / 1024)} KB`;
+  }
+
+  return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function validateFormValues(values: ConferenceFormValues) {
+  const errors: FieldErrors = {};
+
+  if (!values.title.ar.trim()) {
+    errors.titleAr = TITLE_REQUIRED_ERROR;
+  }
+
+  if (!values.title.en.trim()) {
+    errors.titleEn = TITLE_REQUIRED_ERROR;
+  }
+
+  if (!values.description.ar.trim()) {
+    errors.descriptionAr = DESCRIPTION_REQUIRED_ERROR;
+  }
+
+  if (!values.description.en.trim()) {
+    errors.descriptionEn = DESCRIPTION_REQUIRED_ERROR;
+  }
+
+  if (!values.date.trim()) {
+    errors.date = DATE_REQUIRED_ERROR;
+  }
+
+  if (values.images.some((image) => !isValidImageUrl(image))) {
+    errors.manualImage = IMAGE_URL_VALIDATION_ERROR;
+  }
+
+  if (values.videos.some((video) => !isValidVideoUrl(video))) {
+    errors.manualVideo = VIDEO_URL_VALIDATION_ERROR;
+  }
+
+  return errors;
+}
+
 export function ConferencesManager({ initialData }: { initialData: Conference[] }) {
   const [conferences, setConferences] = useState(initialData);
   const [isEditing, setIsEditing] = useState(false);
   const [formValues, setFormValues] = useState<ConferenceFormValues>(createEmptyConference());
   const [status, setStatus] = useState<StatusState>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
   const [libraryImages, setLibraryImages] = useState<MediaItem[]>([]);
   const [libraryVideos, setLibraryVideos] = useState<MediaItem[]>([]);
   const [mediaLoading, setMediaLoading] = useState(true);
   const [manualVideoUrl, setManualVideoUrl] = useState("");
   const [manualImageUrl, setManualImageUrl] = useState("");
+  const [pendingMedia, setPendingMedia] = useState<PendingMedia[]>([]);
+  const [isDragActive, setIsDragActive] = useState(false);
+
+  const uploadInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -121,7 +215,7 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
         setLibraryVideos(data.videos || []);
       } catch {
         if (isMounted) {
-          setStatus({ kind: "error", message: "تعذر تحميل مكتبة الوسائط." });
+          setStatus({ kind: "error", message: "Failed to load media library" });
         }
       } finally {
         if (isMounted) {
@@ -137,13 +231,24 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      pendingMedia.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+    };
+  }, [pendingMedia]);
+
   const sortedConferences = useMemo(
     () => [...conferences].sort((left, right) => right.createdAt.localeCompare(left.createdAt)),
     [conferences],
   );
 
   function resetEditor() {
+    pendingMedia.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+
     setFormValues(createEmptyConference());
+    setFieldErrors({});
+    setStatus(null);
+    setPendingMedia([]);
     setIsEditing(false);
     setManualVideoUrl("");
     setManualImageUrl("");
@@ -165,28 +270,76 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
         [locale]: value,
       },
     }));
+
+    if (key === "title") {
+      setFieldErrors((current) => ({
+        ...current,
+        [locale === "ar" ? "titleAr" : "titleEn"]: undefined,
+      }));
+    }
+
+    if (key === "description") {
+      setFieldErrors((current) => ({
+        ...current,
+        [locale === "ar" ? "descriptionAr" : "descriptionEn"]: undefined,
+      }));
+    }
   }
 
   function handleEdit(conference: Conference) {
     setFormValues(mapConferenceToForm(conference));
+    setFieldErrors({});
+    setPendingMedia([]);
     setIsEditing(true);
     setStatus(null);
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("هل أنت متأكد من حذف المؤتمر؟")) {
+    if (!confirm("Are you sure you want to delete this conference?")) {
       return;
     }
 
     const response = await fetch(`/api/conferences/${id}`, { method: "DELETE" });
 
     if (!response.ok) {
-      setStatus({ kind: "error", message: "فشل حذف المؤتمر." });
+      setStatus({ kind: "error", message: "Failed to delete conference" });
       return;
     }
 
     setConferences((current) => current.filter((conference) => conference.id !== id));
-    setStatus({ kind: "success", message: "تم حذف المؤتمر بنجاح." });
+    setStatus({ kind: "success", message: "Conference deleted" });
+  }
+
+  function queueMediaFiles(files: File[]) {
+    if (files.length === 0) {
+      return;
+    }
+
+    const allowed = files.filter((file) => file.type.startsWith("image/") || file.type === "video/mp4");
+
+    if (allowed.length !== files.length) {
+      setStatus({ kind: "error", message: "Only images and mp4 videos are supported" });
+    }
+
+    const additions = allowed.map((file) => ({
+      id: `${file.name}-${file.size}-${crypto.randomUUID()}`,
+      file,
+      previewUrl: URL.createObjectURL(file),
+      type: file.type.startsWith("image/") ? "image" : "video",
+    } satisfies PendingMedia));
+
+    setPendingMedia((current) => [...current, ...additions]);
+  }
+
+  function handleUploadInputChange(event: ChangeEvent<HTMLInputElement>) {
+    queueMediaFiles(Array.from(event.target.files || []));
+    event.target.value = "";
+  }
+
+  function onMediaDrop(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setIsDragActive(false);
+    queueMediaFiles(Array.from(event.dataTransfer.files));
   }
 
   async function uploadMedia(file: File) {
@@ -219,10 +372,8 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
     }
   }
 
-  async function handleMediaUpload(event: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(event.target.files || []);
-
-    if (files.length === 0) {
+  async function uploadPendingMedia() {
+    if (pendingMedia.length === 0) {
       return;
     }
 
@@ -230,20 +381,33 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
     setStatus(null);
 
     try {
-      for (const file of files) {
-        await uploadMedia(file);
+      for (const item of pendingMedia) {
+        await uploadMedia(item.file);
       }
 
-      setStatus({ kind: "success", message: "تم رفع الوسائط وإضافتها إلى المؤتمر." });
+      pendingMedia.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+      setPendingMedia([]);
+      setStatus({ kind: "success", message: "Media uploaded successfully" });
     } catch (error) {
       setStatus({
         kind: "error",
-        message: error instanceof Error ? error.message : "فشل رفع الملف.",
+        message: error instanceof Error ? error.message : "Media upload failed",
       });
     } finally {
       setLoading(false);
-      event.target.value = "";
     }
+  }
+
+  function removePendingMedia(id: string) {
+    setPendingMedia((current) => {
+      const target = current.find((item) => item.id === id);
+
+      if (target) {
+        URL.revokeObjectURL(target.previewUrl);
+      }
+
+      return current.filter((item) => item.id !== id);
+    });
   }
 
   function toggleAsset(listKey: "images" | "videos", value: string) {
@@ -262,27 +426,33 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
     }
 
     if (listKey === "images" && !isValidImageUrl(trimmed)) {
-      setStatus({ kind: "error", message: IMAGE_URL_VALIDATION_ERROR });
+      setFieldErrors((current) => ({ ...current, manualImage: IMAGE_URL_VALIDATION_ERROR }));
+      setStatus({ kind: "error", message: "Invalid image URL" });
       return false;
     }
+
+    if (listKey === "videos" && !isValidVideoUrl(trimmed)) {
+      setFieldErrors((current) => ({ ...current, manualVideo: VIDEO_URL_VALIDATION_ERROR }));
+      setStatus({ kind: "error", message: "Invalid video URL" });
+      return false;
+    }
+
+    setFieldErrors((current) => ({
+      ...current,
+      [listKey === "images" ? "manualImage" : "manualVideo"]: undefined,
+    }));
 
     updateForm(listKey, Array.from(new Set([...formValues[listKey], trimmed])));
     return true;
   }
 
   async function handleSubmit() {
-    if (!formValues.title.ar.trim() || !formValues.title.en.trim()) {
-      setStatus({ kind: "error", message: "يجب إدخال عنوان المؤتمر بالعربية والإنجليزية." });
-      return;
-    }
+    const nextErrors = validateFormValues(formValues);
+    setFieldErrors(nextErrors);
 
-    if (!formValues.date.trim()) {
-      setStatus({ kind: "error", message: "يرجى تحديد تاريخ المؤتمر." });
-      return;
-    }
-
-    if (formValues.images.some((imageUrl) => !isValidImageUrl(imageUrl))) {
-      setStatus({ kind: "error", message: IMAGE_URL_VALIDATION_ERROR });
+    if (Object.values(nextErrors).some(Boolean)) {
+      const firstError = Object.values(nextErrors).find(Boolean) || "Please fix form errors";
+      setStatus({ kind: "error", message: firstError });
       return;
     }
 
@@ -309,41 +479,59 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
 
     const payload = await response.json();
 
-    setLoading(false);
-
     if (!response.ok) {
-      setStatus({ kind: "error", message: payload.error || "فشل حفظ المؤتمر." });
+      setLoading(false);
+      setStatus({ kind: "error", message: payload.error || "Failed to save conference" });
       return;
     }
 
     const savedConference = payload.data as Conference;
+
+    try {
+      const syncResponse = await fetch("/api/conferences", { cache: "no-store" });
+      const syncPayload = await syncResponse.json();
+      const synced = Array.isArray(syncPayload.data)
+        && syncPayload.data.some((item: Conference) => item.id === savedConference.id);
+
+      if (!synced) {
+        setLoading(false);
+        setStatus({ kind: "error", message: FRONTEND_SYNC_ERROR });
+        return;
+      }
+    } catch {
+      setLoading(false);
+      setStatus({ kind: "error", message: FRONTEND_SYNC_ERROR });
+      return;
+    }
 
     setConferences((current) => {
       const withoutCurrent = current.filter((conference) => conference.id !== savedConference.id);
       return [savedConference, ...withoutCurrent];
     });
 
-    setStatus({ kind: "success", message: "تم حفظ المؤتمر بنجاح." });
+    setLoading(false);
     resetEditor();
+    setStatus({ kind: "success", message: "Conference saved successfully" });
   }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">إدارة المؤتمرات والفعاليات</h1>
+          <h1 className="text-2xl font-bold">Conferences Dashboard</h1>
           <p className="mt-2 text-sm text-gray-500">
-            إدارة متعددة اللغات للصور والفيديو والمحتوى والتصنيفات الخاصة بالمؤتمرات.
+            Production-grade conference form with strict validation and reliable media workflow.
           </p>
         </div>
         <Button
           onClick={() => {
             setStatus(null);
             setFormValues(createEmptyConference());
+            setFieldErrors({});
             setIsEditing(true);
           }}
         >
-          <Plus className="h-4 w-4" /> إضافة مؤتمر
+          <Plus className="h-4 w-4" /> Add Conference
         </Button>
       </div>
 
@@ -354,6 +542,7 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
               ? "border-emerald-200 bg-emerald-50 text-emerald-700"
               : "border-red-200 bg-red-50 text-red-700"
           }`}
+          role="status"
         >
           {status.message}
         </div>
@@ -362,30 +551,46 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
       {isEditing ? (
         <div className="space-y-6 rounded-lg border bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between gap-4">
-            <h2 className="text-xl font-bold">{formValues.id ? "تعديل المؤتمر" : "إضافة مؤتمر جديد"}</h2>
+            <h2 className="text-xl font-bold">{formValues.id ? "Edit Conference" : "Create Conference"}</h2>
             <Button onClick={resetEditor} type="button" variant="secondary">
-              إلغاء
+              Cancel
             </Button>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-2">
-            <div className="space-y-4 rounded-lg border border-[var(--color-border)] p-4">
-              <h3 className="font-semibold text-[var(--color-primary)]">المحتوى العربي</h3>
+          <section className="space-y-4 rounded-lg border border-[var(--color-border)] p-4">
+            <h3 className="font-semibold text-[var(--color-primary)]">1. Basic Info</h3>
+            <div className="grid gap-4 xl:grid-cols-2">
               <Input
                 id="title-ar"
-                label="العنوان"
+                label="Title (AR)"
                 onChange={(event) => updateLocalizedField("title", "ar", event.target.value)}
                 value={formValues.title.ar}
+                error={fieldErrors.titleAr}
+                required
+              />
+              <Input
+                id="title-en"
+                label="Title (EN)"
+                onChange={(event) => updateLocalizedField("title", "en", event.target.value)}
+                value={formValues.title.en}
+                error={fieldErrors.titleEn}
+                required
               />
               <Input
                 id="location-ar"
-                label="الموقع"
+                label="Location (AR)"
                 onChange={(event) => updateLocalizedField("location", "ar", event.target.value)}
                 value={formValues.location.ar}
               />
               <Input
+                id="location-en"
+                label="Location (EN)"
+                onChange={(event) => updateLocalizedField("location", "en", event.target.value)}
+                value={formValues.location.en}
+              />
+              <Input
                 id="category-ar"
-                label="التصنيف"
+                label="Category (AR)"
                 onChange={(event) =>
                   updateForm("category", {
                     ...formValues.category,
@@ -395,55 +600,89 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
                 value={formValues.category.label.ar}
               />
               <Input
+                id="category-en"
+                label="Category (EN)"
+                onChange={(event) =>
+                  updateForm("category", {
+                    ...formValues.category,
+                    label: { ...formValues.category.label, en: event.target.value },
+                  })
+                }
+                value={formValues.category.label.en}
+              />
+              <Input
                 id="tags-ar"
-                label="الوسوم العربية"
+                label="Tags (AR)"
                 onChange={(event) =>
                   updateForm("tags", {
                     ...formValues.tags,
                     ar: splitCommaValues(event.target.value),
                   })
                 }
-                placeholder="مثال: علاج موجه, أورام"
+                placeholder="targeted therapy, oncology"
                 value={formValues.tags.ar.join(", ")}
               />
               <Input
+                id="tags-en"
+                label="Tags (EN)"
+                onChange={(event) =>
+                  updateForm("tags", {
+                    ...formValues.tags,
+                    en: splitCommaValues(event.target.value),
+                  })
+                }
+                placeholder="oncology, summit"
+                value={formValues.tags.en.join(", ")}
+              />
+            </div>
+          </section>
+
+          <section className="space-y-4 rounded-lg border border-[var(--color-border)] p-4">
+            <h3 className="font-semibold text-[var(--color-primary)]">2. Content</h3>
+            <div className="grid gap-4 xl:grid-cols-2">
+              <Input
                 id="short-description-ar"
-                label="الوصف المختصر"
+                label="Short Description (AR)"
                 onChange={(event) => updateLocalizedField("shortDescription", "ar", event.target.value)}
                 value={formValues.shortDescription.ar}
               />
+              <Input
+                id="short-description-en"
+                label="Short Description (EN)"
+                onChange={(event) => updateLocalizedField("shortDescription", "en", event.target.value)}
+                value={formValues.shortDescription.en}
+              />
               <TextareaField
-                label="الوصف الكامل"
+                id="description-ar"
+                label="Full Description (AR)"
                 onChange={(value) => updateLocalizedField("description", "ar", value)}
                 value={formValues.description.ar}
+                error={fieldErrors.descriptionAr}
+              />
+              <TextareaField
+                id="description-en"
+                label="Full Description (EN)"
+                onChange={(value) => updateLocalizedField("description", "en", value)}
+                value={formValues.description.en}
+                error={fieldErrors.descriptionEn}
               />
             </div>
+          </section>
 
-            <div className="space-y-4 rounded-lg border border-[var(--color-border)] p-4">
-              <h3 className="font-semibold text-[var(--color-primary)]">English Content</h3>
+          <section className="space-y-4 rounded-lg border border-[var(--color-border)] p-4">
+            <h3 className="font-semibold text-[var(--color-primary)]">3. Event Settings</h3>
+            <div className="grid gap-4 md:grid-cols-2">
               <Input
-                id="title-en"
-                label="Title"
-                onChange={(event) => updateLocalizedField("title", "en", event.target.value)}
-                value={formValues.title.en}
-              />
-              <Input
-                id="location-en"
-                label="Location"
-                onChange={(event) => updateLocalizedField("location", "en", event.target.value)}
-                value={formValues.location.en}
-              />
-              <Input
-                id="category-en"
-                label="Category"
-                onChange={(event) =>
-                  updateForm("category", {
-                    ...formValues.category,
-                    label: { ...formValues.category.label, en: event.target.value },
-                    key: event.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || formValues.category.key,
-                  })
-                }
-                value={formValues.category.label.en}
+                id="conference-date"
+                label="Date"
+                onChange={(event) => {
+                  updateForm("date", event.target.value);
+                  setFieldErrors((current) => ({ ...current, date: undefined }));
+                }}
+                type="date"
+                value={formValues.date}
+                error={fieldErrors.date}
+                required
               />
               <Input
                 id="category-key"
@@ -456,63 +695,113 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
                 }
                 value={formValues.category.key}
               />
-              <Input
-                id="tags-en"
-                label="English Tags"
-                onChange={(event) =>
-                  updateForm("tags", {
-                    ...formValues.tags,
-                    en: splitCommaValues(event.target.value),
-                  })
-                }
-                placeholder="Example: oncology, summit"
-                value={formValues.tags.en.join(", ")}
-              />
-              <Input
-                id="short-description-en"
-                label="Short Description"
-                onChange={(event) => updateLocalizedField("shortDescription", "en", event.target.value)}
-                value={formValues.shortDescription.en}
-              />
-              <TextareaField
-                label="Full Description"
-                onChange={(value) => updateLocalizedField("description", "en", value)}
-                value={formValues.description.en}
-              />
             </div>
-          </div>
+          </section>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-lg border border-[var(--color-border)] p-4">
-              <h3 className="mb-4 font-semibold text-[var(--color-primary)]">إعدادات الحدث</h3>
-              <div className="grid gap-4 md:grid-cols-2">
-                <Input
-                  id="conference-date"
-                  label="التاريخ"
-                  onChange={(event) => updateForm("date", event.target.value)}
-                  type="date"
-                  value={formValues.date}
-                />
-                <Input
-                  id="manual-image-url"
-                  label="إضافة رابط صورة"
-                  onChange={(event) => setManualImageUrl(event.target.value)}
-                  placeholder="https://..."
-                  value={manualImageUrl}
+          <section className="space-y-4 rounded-lg border border-[var(--color-border)] p-4">
+            <h3 className="font-semibold text-[var(--color-primary)]">4. Media</h3>
+
+            <div className="space-y-3 rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-surface-muted)] p-4">
+              <h4 className="font-semibold">A. Upload Media</h4>
+              <div
+                className={`rounded-lg border-2 border-dashed p-6 text-center transition ${isDragActive ? "border-[var(--color-primary)] bg-[var(--color-primary-soft)]" : "border-[var(--color-border)] bg-white"}`}
+                onDrop={onMediaDrop}
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  setIsDragActive(true);
+                }}
+                onDragLeave={() => setIsDragActive(false)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    uploadInputRef.current?.click();
+                  }
+                }}
+              >
+                <p className="text-sm text-[var(--color-text-secondary)]">Drag and drop images/videos here</p>
+                <p className="mt-1 text-xs text-[var(--color-text-muted)]">Supported: image/* and mp4</p>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="mt-4"
+                  onClick={() => uploadInputRef.current?.click()}
+                >
+                  <Upload className="h-4 w-4" /> Select files
+                </Button>
+                <input
+                  ref={uploadInputRef}
+                  data-testid="media-upload-input"
+                  accept="image/*,video/mp4"
+                  className="hidden"
+                  multiple
+                  onChange={handleUploadInputChange}
+                  type="file"
                 />
               </div>
-              <div className="mt-4 flex flex-wrap gap-3">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)]">
-                  <Upload className="h-4 w-4" />
-                  رفع صور أو فيديوهات
-                  <input
-                    accept="image/*,video/*"
-                    className="hidden"
-                    multiple
-                    onChange={handleMediaUpload}
-                    type="file"
-                  />
-                </label>
+
+              {pendingMedia.length > 0 ? (
+                <div className="space-y-3">
+                  <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                    {pendingMedia.map((item) => (
+                      <div key={item.id} className="overflow-hidden rounded-lg border bg-white p-2">
+                        <div className="relative aspect-video overflow-hidden rounded-md bg-black/5">
+                          {item.type === "image" ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              alt={item.file.name}
+                              className="h-full w-full object-cover"
+                              loading="lazy"
+                              src={item.previewUrl}
+                              onError={(event) => {
+                                event.currentTarget.src = "/images/conference-1.png";
+                              }}
+                            />
+                          ) : (
+                            <video className="h-full w-full object-cover" controls preload="metadata">
+                              <source src={item.previewUrl} type="video/mp4" />
+                            </video>
+                          )}
+                        </div>
+                        <div className="mt-2 flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate text-xs font-medium">{item.file.name}</p>
+                            <p className="text-[10px] text-[var(--color-text-muted)]">{formatSize(item.file.size)}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removePendingMedia(item.id)}
+                            aria-label="Remove pending media"
+                            className="rounded p-1 text-gray-500 hover:bg-gray-100"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <Button type="button" loading={loading} onClick={uploadPendingMedia}>
+                    Upload selected media
+                  </Button>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="grid gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <h4 className="font-semibold">B. External Links - Image</h4>
+                <Input
+                  id="manual-image-url"
+                  label="Image URL"
+                  onChange={(event) => {
+                    setManualImageUrl(event.target.value);
+                    setFieldErrors((current) => ({ ...current, manualImage: undefined }));
+                  }}
+                  placeholder="/uploads/image.jpg or https://trusted/image.webp"
+                  value={manualImageUrl}
+                  error={fieldErrors.manualImage}
+                />
                 <Button
                   onClick={() => {
                     const added = addManualAsset("images", manualImageUrl);
@@ -524,43 +813,48 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
                   type="button"
                   variant="secondary"
                 >
-                  إضافة رابط الصورة
+                  Add image URL
                 </Button>
               </div>
-            </div>
 
-            <div className="rounded-lg border border-[var(--color-border)] p-4">
-              <h3 className="mb-4 font-semibold text-[var(--color-primary)]">الفيديوهات</h3>
-              <Input
-                id="manual-video-url"
-                label="رابط فيديو أو يوتيوب"
-                onChange={(event) => setManualVideoUrl(event.target.value)}
-                placeholder="https://youtube.com/... أو /uploads/..."
-                value={manualVideoUrl}
-              />
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="space-y-2">
+                <h4 className="font-semibold">B. External Links - Video</h4>
+                <Input
+                  id="manual-video-url"
+                  label="Video URL"
+                  onChange={(event) => {
+                    setManualVideoUrl(event.target.value);
+                    setFieldErrors((current) => ({ ...current, manualVideo: undefined }));
+                  }}
+                  placeholder="https://youtube.com/... or /uploads/video.mp4"
+                  value={manualVideoUrl}
+                  error={fieldErrors.manualVideo}
+                />
                 <Button
                   onClick={() => {
-                    addManualAsset("videos", manualVideoUrl);
-                    setManualVideoUrl("");
+                    const added = addManualAsset("videos", manualVideoUrl);
+
+                    if (added) {
+                      setManualVideoUrl("");
+                    }
                   }}
                   type="button"
                   variant="secondary"
                 >
-                  <Video className="h-4 w-4" /> إضافة الفيديو
+                  <Video className="h-4 w-4" /> Add video URL
                 </Button>
               </div>
             </div>
-          </div>
+          </section>
 
           <div className="grid gap-6 xl:grid-cols-2">
             <div className="rounded-lg border border-[var(--color-border)] p-4">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-semibold text-[var(--color-primary)]">مكتبة الصور</h3>
-                <span className="text-xs text-gray-500">{formValues.images.length} محددة</span>
+                <h3 className="font-semibold text-[var(--color-primary)]">Image Library</h3>
+                <span className="text-xs text-gray-500">{formValues.images.length} selected</span>
               </div>
               {mediaLoading ? (
-                <p className="text-sm text-gray-500">جاري تحميل الوسائط...</p>
+                <p className="text-sm text-gray-500">Loading media...</p>
               ) : (
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                   {libraryImages.map((item) => {
@@ -573,7 +867,15 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
                         type="button"
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img alt={item.filename} className="aspect-video h-full w-full object-cover" src={item.url} />
+                        <img
+                          alt={item.filename}
+                          className="aspect-video h-full w-full object-cover"
+                          loading="lazy"
+                          src={item.url}
+                          onError={(event) => {
+                            event.currentTarget.src = "/images/conference-1.png";
+                          }}
+                        />
                       </button>
                     );
                   })}
@@ -583,11 +885,11 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
 
             <div className="rounded-lg border border-[var(--color-border)] p-4">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-semibold text-[var(--color-primary)]">مكتبة الفيديو</h3>
-                <span className="text-xs text-gray-500">{formValues.videos.length} محددة</span>
+                <h3 className="font-semibold text-[var(--color-primary)]">Video Library</h3>
+                <span className="text-xs text-gray-500">{formValues.videos.length} selected</span>
               </div>
               {mediaLoading ? (
-                <p className="text-sm text-gray-500">جاري تحميل الوسائط...</p>
+                <p className="text-sm text-gray-500">Loading media...</p>
               ) : (
                 <div className="space-y-3">
                   {libraryVideos.map((item) => {
@@ -610,11 +912,11 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
           </div>
 
           <div className="flex flex-wrap gap-4">
-            <Button loading={loading} onClick={handleSubmit} type="button">
-              حفظ المؤتمر
+            <Button data-testid="save-conference" loading={loading} onClick={handleSubmit} type="button">
+              Save conference
             </Button>
             <Button onClick={resetEditor} type="button" variant="secondary">
-              إغلاق المحرر
+              Close editor
             </Button>
           </div>
         </div>
@@ -624,11 +926,11 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
         <table className="w-full text-right text-sm">
           <thead className="border-b bg-gray-50">
             <tr>
-              <th className="px-6 py-3 font-semibold text-gray-700">العنوان</th>
-              <th className="px-6 py-3 font-semibold text-gray-700">التاريخ</th>
-              <th className="px-6 py-3 font-semibold text-gray-700">التصنيف</th>
-              <th className="px-6 py-3 font-semibold text-gray-700">الصور / الفيديو</th>
-              <th className="px-6 py-3 text-center font-semibold text-gray-700">إجراءات</th>
+              <th className="px-6 py-3 font-semibold text-gray-700">Title</th>
+              <th className="px-6 py-3 font-semibold text-gray-700">Date</th>
+              <th className="px-6 py-3 font-semibold text-gray-700">Category</th>
+              <th className="px-6 py-3 font-semibold text-gray-700">Media</th>
+              <th className="px-6 py-3 text-center font-semibold text-gray-700">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -663,7 +965,7 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
             {sortedConferences.length === 0 ? (
               <tr>
                 <td className="px-6 py-8 text-center text-gray-500" colSpan={5}>
-                  لا توجد مؤتمرات مضافة حتى الآن.
+                  No conferences yet.
                 </td>
               </tr>
             ) : null}

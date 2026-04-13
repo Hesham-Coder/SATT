@@ -1,4 +1,5 @@
 const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
+const ALLOWED_VIDEO_EXTENSIONS = [".mp4"];
 const DEFAULT_TRUSTED_DOMAINS = ["localhost", "127.0.0.1"];
 const BLOCKED_HOSTS = ["facebook.com", "fb.com", "m.facebook.com", "www.facebook.com"];
 
@@ -24,6 +25,12 @@ function hasAllowedImageExtension(pathname: string) {
   const normalizedPath = pathname.toLowerCase();
 
   return ALLOWED_IMAGE_EXTENSIONS.some((extension) => normalizedPath.endsWith(extension));
+}
+
+function hasAllowedVideoExtension(pathname: string) {
+  const normalizedPath = pathname.toLowerCase();
+
+  return ALLOWED_VIDEO_EXTENSIONS.some((extension) => normalizedPath.endsWith(extension));
 }
 
 function isBlockedHost(hostname: string) {
@@ -101,6 +108,63 @@ export function sanitizeImageUrls(values: string[]) {
   );
 }
 
+export function isYouTubeUrl(rawValue: string) {
+  const value = rawValue.trim().toLowerCase();
+
+  return (
+    value.includes("youtube.com/watch") ||
+    value.includes("youtube.com/embed/") ||
+    value.includes("youtu.be/")
+  );
+}
+
+export function isValidVideoUrl(rawValue: string) {
+  const value = rawValue.trim();
+
+  if (!value) {
+    return false;
+  }
+
+  if (isYouTubeUrl(value)) {
+    return true;
+  }
+
+  if (value.startsWith("/") || value.startsWith("uploads/")) {
+    const normalizedPath = asPathWithFilename(value);
+
+    if (!normalizedPath.startsWith("/uploads/")) {
+      return false;
+    }
+
+    const [pathname] = normalizedPath.split(/[?#]/);
+    return hasAllowedVideoExtension(pathname);
+  }
+
+  let parsed: URL;
+
+  try {
+    parsed = new URL(value);
+  } catch {
+    return false;
+  }
+
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    return false;
+  }
+
+  return hasAllowedVideoExtension(parsed.pathname);
+}
+
+export function sanitizeVideoUrls(values: string[]) {
+  return Array.from(
+    new Set(
+      values
+        .map((value) => value.trim())
+        .filter((value) => isValidVideoUrl(value)),
+    ),
+  );
+}
+
 export function getSafeImageSrc(value: string | null | undefined, fallbackSrc: string) {
   if (!value) {
     return fallbackSrc;
@@ -111,3 +175,6 @@ export function getSafeImageSrc(value: string | null | undefined, fallbackSrc: s
 
 export const IMAGE_URL_VALIDATION_ERROR =
   "Please enter a direct image URL (jpg/png/webp)";
+
+export const VIDEO_URL_VALIDATION_ERROR =
+  "Please enter a valid YouTube or direct mp4 URL";
