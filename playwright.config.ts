@@ -8,7 +8,7 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "cmd /c set PLAYWRIGHT_TEST=1&& npm run dev -- --port 3001",
+    command: "cmd /c node scripts/ensure-admin-user.js && npm run dev -- --port 3001",
     port: 3001,
     reuseExistingServer: false,
     stdout: "ignore",

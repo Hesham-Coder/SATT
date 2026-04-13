@@ -17,45 +17,17 @@ export async function login(formData: FormData) {
 
   try {
     user = await prisma.user.findUnique({ where: { email } });
-
-    // For testing/bootstrap: Create an admin user if not exists.
-    if (!user && email === "admin@satt.org" && password === "admin") {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      user = await prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name: "Admin",
-          role: "admin",
-        },
-      });
-    }
-
-    if (!user) {
-      return { error: "البريد الإلكتروني غير صحيح." };
-    }
-
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) {
-      return { error: "كلمة المرور غير صحيحة." };
-    }
   } catch {
-    // Keep non-production local/dev workflows available even if database is temporarily unavailable.
-    if (
-      process.env.NODE_ENV !== "production"
-      && email === "admin@satt.org"
-      && password === "admin"
-    ) {
-      user = {
-        id: "local-admin",
-        email,
-        name: "Admin",
-        role: "admin",
-        password: "",
-      };
-    } else {
-      return { error: "تعذر تسجيل الدخول حالياً. حاول مرة أخرى." };
-    }
+    return { error: "تعذر تسجيل الدخول حالياً. حاول مرة أخرى." };
+  }
+
+  if (!user) {
+    return { error: "البريد الإلكتروني غير صحيح." };
+  }
+
+  const valid = await bcrypt.compare(password, user.password);
+  if (!valid) {
+    return { error: "كلمة المرور غير صحيحة." };
   }
 
   const sessionData = {
