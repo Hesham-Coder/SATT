@@ -21,7 +21,7 @@ export function HeroSection() {
         <div className="space-y-[var(--space-8)]">
           <Badge>الجمعية العلمية للعلاج الموجه</Badge>
           <div className="space-y-[var(--space-5)]">
-            <h1 className="max-w-4xl font-[family-name:var(--font-family-display)] text-[length:var(--font-size-3xl)] font-[var(--font-weight-bold)] leading-[var(--line-height-tight)] tracking-[var(--tracking-display)] text-[var(--color-text-primary)] sm:text-[length:var(--font-size-4xl)]">
+            <h1 className="max-w-4xl font-[family-name:var(--font-family-display)] text-[clamp(2rem,8vw,3.5rem)] font-[var(--font-weight-bold)] leading-[var(--line-height-tight)] tracking-[var(--tracking-display)] text-[var(--color-text-primary)]">
               نبني منصة علمية رائدة لدعم التطور المستمر في رعاية مرضى الأورام.
             </h1>
             <p className="max-w-2xl text-[length:var(--font-size-md)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)]">
@@ -29,15 +29,15 @@ export function HeroSection() {
             </p>
           </div>
           <div className="flex flex-col gap-[var(--space-3)] sm:flex-row">
-            <Button onClick={() => scrollToSection("pillars")} size="lg">
-              تعرف على أهدافنا
+            <Button onClick={() => scrollToSection("contact")} size="lg">
+              احجز الآن
             </Button>
             <Button
-              onClick={() => scrollToSection("contact")}
+              onClick={() => scrollToSection("doctors")}
               size="lg"
               variant="secondary"
             >
-              تواصل معنا
+              تعرف على الأطباء
             </Button>
           </div>
           <ul className="grid gap-[var(--space-4)] text-[length:var(--font-size-xs)] text-[var(--color-text-secondary)] sm:grid-cols-3">
@@ -67,7 +67,7 @@ export function HeroSection() {
                 مبادرة مستمرة
               </span>
             </div>
-            <div className="mt-[var(--space-6)] grid gap-[var(--space-4)] sm:grid-cols-2">
+            <div className="mt-[var(--space-6)] grid gap-[var(--space-4)] md:grid-cols-2">
               <div className="rounded-[var(--radius-md)] bg-[var(--color-surface)] p-[var(--space-4)] shadow-[var(--shadow-sm)]">
                 <p className="text-[length:var(--font-size-xxs)] uppercase text-[var(--color-text-muted)]">
                   التركيز الأساسي

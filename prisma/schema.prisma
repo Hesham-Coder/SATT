@@ -71,6 +71,10 @@ model SiteSettings {
   id          String   @id @default("settings")
   heroTitle   String
   heroDesc    String
+  heroImageUrl String?
+  heroImageAlt String?
+  heroImageWidth Int?
+  heroImageHeight Int?
   aboutText   String
   updatedAt   DateTime @updatedAt
 }

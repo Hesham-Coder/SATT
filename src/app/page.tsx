@@ -30,6 +30,16 @@ const PillarsSection = dynamicImport(
   },
 );
 
+const DoctorsSection = dynamicImport(
+  () =>
+    import("@/components/sections/DoctorsSection").then(
+      (mod) => mod.DoctorsSection,
+    ),
+  {
+    loading: () => <SectionPlaceholder />,
+  },
+);
+
 const ConferencesSection = dynamicImport(
   () =>
     import("@/components/sections/ConferencesSection").then(
@@ -75,6 +85,7 @@ export default async function HomePage() {
         <HeroSection />
         <AboutSection />
         <PillarsSection />
+        <DoctorsSection />
         <ConferencesSection conferences={conferences} />
         <ResearchSection researchArticles={researchArticles} />
         <ContactSection />

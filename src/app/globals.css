@@ -13,11 +13,14 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: clip;
   background: var(--color-background);
   background-image:
     radial-gradient(
@@ -34,6 +37,7 @@ body {
   color: var(--color-text-primary);
   font-family: var(--font-family-sans);
   text-rendering: optimizeLegibility;
+  line-height: var(--line-height-base);
 }
 
 a {
@@ -48,6 +52,18 @@ img {
 
 main {
   display: block;
+}
+
+@media (max-width: 1024px) {
+  body {
+    padding-bottom: 9.75rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  body {
+    padding-bottom: 6.5rem;
+  }
 }
 
 button,

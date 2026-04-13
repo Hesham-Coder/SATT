@@ -16,6 +16,8 @@ export type MediaFile = {
   type: "image" | "video";
   size: number;
   updatedAt: string;
+  width?: number;
+  height?: number;
 };
 
 function getUploadsDir() {
@@ -53,6 +55,14 @@ export async function listMediaFiles(): Promise<MediaFile[]> {
       }
 
       const stats = await fsPromises.stat(path.join(getUploadsDir(), filename));
+      let width: number | undefined;
+      let height: number | undefined;
+
+      if (type === "image") {
+        const metadata = await sharp(path.join(getUploadsDir(), filename)).metadata();
+        width = metadata.width;
+        height = metadata.height;
+      }
 
       return {
         filename,
@@ -60,6 +70,8 @@ export async function listMediaFiles(): Promise<MediaFile[]> {
         type,
         size: stats.size,
         updatedAt: stats.mtime.toISOString(),
+        width,
+        height,
       } satisfies MediaFile;
     }),
   );
@@ -107,6 +119,14 @@ export async function saveUploadedFile(file: File): Promise<MediaFile> {
 
   await fsPromises.writeFile(filePath, finalBuffer);
   const stats = await fsPromises.stat(filePath);
+  let width: number | undefined;
+  let height: number | undefined;
+
+  if (type === "image") {
+    const metadata = await sharp(filePath).metadata();
+    width = metadata.width;
+    height = metadata.height;
+  }
 
   return {
     filename,
@@ -114,6 +134,8 @@ export async function saveUploadedFile(file: File): Promise<MediaFile> {
     type,
     size: stats.size,
     updatedAt: stats.mtime.toISOString(),
+    width,
+    height,
   };
 }
 

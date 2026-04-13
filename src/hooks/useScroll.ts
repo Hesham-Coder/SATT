@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const SECTION_IDS = ["top", "about", "pillars", "conferences", "research", "contact"] as const;
+const SECTION_IDS = ["top", "about", "pillars", "doctors", "conferences", "research", "contact"] as const;
 
 function getActiveSection() {
   const offset = 160;

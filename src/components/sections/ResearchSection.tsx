@@ -34,7 +34,7 @@ export function ResearchSection({ researchArticles }: { researchArticles: Resear
       title="منشوراتنا وشراكاتنا البحثية"
     >
       <div className="space-y-[var(--space-8)]">
-        <div className="flex flex-col gap-[var(--space-4)] md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-[var(--space-4)] md:grid md:grid-cols-[1fr_auto] md:items-end">
           <div className="mb-[var(--space-2)] md:mb-0">
             <FilterTabs
               activeFilter={activeFilter}
@@ -42,7 +42,7 @@ export function ResearchSection({ researchArticles }: { researchArticles: Resear
               onFilterChange={setActiveFilter}
             />
           </div>
-          <div className="w-full md:w-64">
+          <div className="w-full md:w-72">
             <Input
               id="search-research"
               name="search"
@@ -55,7 +55,7 @@ export function ResearchSection({ researchArticles }: { researchArticles: Resear
         </div>
 
         {filteredArticles.length > 0 ? (
-          <div className="grid gap-[var(--space-5)] sm:grid-cols-2">
+          <div className="grid gap-[var(--space-5)] sm:grid-cols-2 xl:grid-cols-3">
             {filteredArticles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}

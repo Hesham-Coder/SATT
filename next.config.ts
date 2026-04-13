@@ -22,8 +22,14 @@ const trustedImageDomains = parseTrustedDomains();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
+  compress: true,
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
   allowedDevOrigins: ["127.0.0.1", "localhost"],
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: trustedImageDomains.flatMap((hostname) => [
       { protocol: "https", hostname },
       { protocol: "http", hostname },

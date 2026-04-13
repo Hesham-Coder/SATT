@@ -3,6 +3,7 @@ import { DM_Sans, Plus_Jakarta_Sans, Tajawal } from "next/font/google";
 import { cookies } from "next/headers";
 
 import "@/app/globals.css";
+import { ConversionActions } from "@/components/layout/ConversionActions";
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
 import { resolveLocale } from "@/lib/i18n";
 import { getSeoSettings } from "@/lib/seo";
@@ -66,7 +67,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       suppressHydrationWarning
     >
       <body className={`${sans.variable} ${display.variable} ${arabic.variable}`}>
-        <LanguageProvider initialLocale={locale}>{children}</LanguageProvider>
+        <LanguageProvider initialLocale={locale}>
+          {children}
+          <ConversionActions />
+        </LanguageProvider>
       </body>
     </html>
   );

@@ -45,6 +45,22 @@ export function ContactSection() {
               ? "شكراً لك، تم إرسال رسالتك بنجاح وسنفيدك قريباً."
               : "نقوم عادةً بالرد خلال يوم عمل واحد."}
           </div>
+          <div className="grid gap-[var(--space-3)] sm:grid-cols-2">
+            <a
+              className="inline-flex min-h-[var(--control-height-md)] items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-[var(--space-4)] text-[length:var(--font-size-sm)] font-[var(--font-weight-semibold)] text-[var(--color-text-inverse)]"
+              href="tel:+201000000000"
+            >
+              اتصال مباشر
+            </a>
+            <a
+              className="inline-flex min-h-[var(--control-height-md)] items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-[var(--space-4)] text-[length:var(--font-size-sm)] font-[var(--font-weight-semibold)] text-[var(--color-text-primary)]"
+              href="https://wa.me/201000000000"
+              rel="noreferrer"
+              target="_blank"
+            >
+              واتساب
+            </a>
+          </div>
         </Card>
         <Card>
           <form
