@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useTranslations } from "@/i18n/provider";
 import { Container } from "@/components/layout/Container";
 import { ConferenceCard } from "@/components/ui/ConferenceCard";
 import { FilterTabs } from "@/components/ui/FilterTabs";
@@ -15,7 +15,7 @@ import {
 import type { Conference } from "@/types/conference";
 
 export function ConferencesIndex({ conferences }: { conferences: Conference[] }) {
-  const { locale } = useLanguage();
+  const { locale } = useTranslations();
   const allCategoriesLabel = locale === "ar" ? "كل التصنيفات" : "All Categories";
   const allTagsLabel = locale === "ar" ? "كل الوسوم" : "All Tags";
   const [searchQuery, setSearchQuery] = useState("");

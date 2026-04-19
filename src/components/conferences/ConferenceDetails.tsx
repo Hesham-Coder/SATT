@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useTranslations } from "@/i18n/provider";
 import { Container } from "@/components/layout/Container";
 import { Badge } from "@/components/ui/Badge";
 import { MediaGallery } from "@/components/ui/MediaGallery";
@@ -24,7 +24,7 @@ export function ConferenceDetails({
   conference: Conference;
   relatedConferences?: Conference[];
 }) {
-  const { locale } = useLanguage();
+  const { locale } = useTranslations();
   const title = getConferenceTitle(conference, locale);
   const description = getConferenceDescription(conference, locale);
   const location = getConferenceLocation(conference, locale);

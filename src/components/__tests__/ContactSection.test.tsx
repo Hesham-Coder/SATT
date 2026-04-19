@@ -2,6 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { ContactSection } from "@/components/sections/ContactSection";
+import { TranslationProvider } from "@/i18n/provider";
+import messages from "../../../messages/ar.json";
 
 describe("ContactSection integration", () => {
   beforeEach(() => {
@@ -15,7 +17,11 @@ describe("ContactSection integration", () => {
   it("shows validation errors and success feedback", async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
-    render(<ContactSection />);
+    render(
+      <TranslationProvider locale="ar" messages={messages}>
+        <ContactSection />
+      </TranslationProvider>
+    );
 
     await user.click(screen.getByRole("button", { name: "إرسال الرسالة" }));
 

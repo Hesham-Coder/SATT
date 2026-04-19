@@ -47,11 +47,21 @@ model Conference {
 model ResearchArticle {
   id           String   @id @default(cuid())
   title        String
+  titleAr      String?
+  titleEn      String?
   abstract     String
+  abstractAr   String?
+  abstractEn   String?
   author       String
+  authorAr     String?
+  authorEn     String?
   publishDate  String
   category     String
+  categoryAr   String?
+  categoryEn   String?
   content      String
+  contentAr    String?
+  contentEn    String?
   images       String // Stored as JSON string
   videos       String // Stored as JSON string
   createdAt    DateTime @default(now())
@@ -70,11 +80,17 @@ model Message {
 model SiteSettings {
   id          String   @id @default("settings")
   heroTitle   String
+  heroTitleAr String?
+  heroTitleEn String?
   heroDesc    String
+  heroDescAr  String?
+  heroDescEn  String?
   heroImageUrl String?
   heroImageAlt String?
   heroImageWidth Int?
   heroImageHeight Int?
   aboutText   String
+  aboutTextAr String?
+  aboutTextEn String?
   updatedAt   DateTime @updatedAt
 }

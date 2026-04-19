@@ -1,63 +1,95 @@
 import { Card } from "@/components/ui/Card";
 import { SectionShell } from "@/components/ui/SectionShell";
+import { getDictionary, type SupportedLocale } from "@/i18n/server";
+import { Microscope, Users } from "lucide-react";
+import { FadeUpOnScroll } from "@/components/ui/motion/FadeUpOnScroll";
 
-export function AboutSection() {
+export async function AboutSection({
+  locale,
+  aboutTextCMS,
+}: {
+  locale: SupportedLocale;
+  aboutTextCMS?: string;
+}) {
+  const dictionary = await getDictionary(locale);
+  const t = dictionary.about;
+
   return (
     <SectionShell
-      description="محتوى واضح وسريع الفهم للمرضى والأطباء: ماذا نقدم، كيف نساعد، وما النتيجة المتوقعة."
-      eyebrow="عن الجمعية"
+      description={aboutTextCMS || t.desc}
+      eyebrow={t.eyebrow}
       id="about"
       surface="muted"
-      title="منظومة رعاية ومعرفة مبنية على الوضوح والنتائج"
+      title={t.defaultTitle}
     >
       <div className="grid gap-[var(--space-5)] lg:grid-cols-[1.1fr_0.9fr]">
-        <Card>
-          <div className="space-y-[var(--space-5)]">
-            <p className="text-[length:var(--font-size-xxs)] font-[var(--font-weight-semibold)] text-[var(--color-primary)]">
-              ماذا سيستفيد المريض؟
-            </p>
-            <ul className="space-y-[var(--space-2)] text-[length:var(--font-size-sm)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)]">
-              <li>• خطة علاج أوضح مبنية على الأدلة الحديثة.</li>
-              <li>• سرعة أكبر في الوصول إلى التخصص المناسب.</li>
-              <li>• فهم أبسط للفحوصات الجينية وخيارات العلاج.</li>
-            </ul>
-            <div className="space-y-[var(--space-3)]">
-              <details className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-[var(--space-4)]">
-                <summary className="cursor-pointer text-[length:var(--font-size-sm)] font-[var(--font-weight-semibold)] text-[var(--color-text-primary)]">
-                  كيف نضمن جودة المحتوى الطبي؟
-                </summary>
-                <p className="mt-[var(--space-3)] text-[length:var(--font-size-xs)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)]">
-                  كل مادة علمية تمر بمراجعة من مختصين، مع تحديثات دورية حسب أحدث التوصيات العالمية.
-                </p>
-              </details>
-              <details className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-[var(--space-4)]">
-                <summary className="cursor-pointer text-[length:var(--font-size-sm)] font-[var(--font-weight-semibold)] text-[var(--color-text-primary)]">
-                  متى يظهر أثر البرامج التعليمية؟
-                </summary>
-                <p className="mt-[var(--space-3)] text-[length:var(--font-size-xs)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)]">
-                  خلال أسابيع من التطبيق العملي، خصوصا في دقة القرارات العلاجية وتكامل الفريق الطبي.
-                </p>
-              </details>
+        <FadeUpOnScroll>
+          <Card>
+            <div className="space-y-[var(--space-5)]">
+              <div>
+                <h3 className="font-[family-name:var(--font-family-display)] text-[length:var(--font-size-md)] font-[var(--font-weight-bold)] text-[var(--color-primary-strong)]">
+                  {t.benefitTitle}
+                </h3>
+                <ul className="mt-[var(--space-2)] space-y-[var(--space-1)] text-[length:var(--font-size-sm)] text-[var(--color-text-secondary)]">
+                  <li>• {t.benefit1}</li>
+                  <li>• {t.benefit2}</li>
+                  <li>• {t.benefit3}</li>
+                </ul>
+              </div>
+              <div className="space-y-[var(--space-3)]">
+                <div className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-[var(--space-4)] space-y-[var(--space-4)]">
+                  <div>
+                    <p className="font-[var(--font-weight-bold)] text-[var(--color-text-primary)]">
+                      {t.q1}
+                    </p>
+                    <p className="mt-[var(--space-1)] text-[length:var(--font-size-sm)] text-[var(--color-text-secondary)]">
+                      {t.a1}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-[var(--font-weight-bold)] text-[var(--color-text-primary)]">
+                      {t.q2}
+                    </p>
+                    <p className="mt-[var(--space-1)] text-[length:var(--font-size-sm)] text-[var(--color-text-secondary)]">
+                      {t.a2}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </FadeUpOnScroll>
         <div className="grid gap-[var(--space-5)] sm:grid-cols-2">
-          <Card>
-            <p className="text-[length:var(--font-size-2xl)] font-[var(--font-weight-bold)] text-[var(--color-text-primary)]">
-              المؤتمرات
-            </p>
-            <p className="mt-[var(--space-2)] text-[length:var(--font-size-xs)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)]">
-              منصات للنقاش وتبادل المعرفة
-            </p>
-          </Card>
-          <Card>
-            <p className="text-[length:var(--font-size-2xl)] font-[var(--font-weight-bold)] text-[var(--color-text-primary)]">
-              الأبحاث
-            </p>
-            <p className="mt-[var(--space-2)] text-[length:var(--font-size-xs)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)]">
-              دعم وتشجيع الابتكار العلمي
-            </p>
-          </Card>
+          <FadeUpOnScroll delay={0.1}>
+            <Card className="flex h-full items-start gap-[var(--space-3)]">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-secondary-soft)] text-[var(--color-secondary-strong)] transition-transform duration-300 ease-[var(--ease-standard)] hover:scale-[1.15] hover:rotate-[5deg]">
+                <Users size={20} />
+              </span>
+              <div>
+                <p className="font-[family-name:var(--font-family-display)] text-[length:var(--font-size-lg)] font-[var(--font-weight-bold)] text-[var(--color-text-primary)]">
+                  {t.confTitle}
+                </p>
+                <p className="mt-[var(--space-1)] text-[length:var(--font-size-sm)] text-[var(--color-text-secondary)]">
+                  {t.confSubtitle}
+                </p>
+              </div>
+            </Card>
+          </FadeUpOnScroll>
+          <FadeUpOnScroll delay={0.2}>
+            <Card className="flex h-full items-start gap-[var(--space-3)]">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-secondary-soft)] text-[var(--color-secondary-strong)] transition-transform duration-300 ease-[var(--ease-standard)] hover:scale-[1.15] hover:rotate-[5deg]">
+                <Microscope size={20} />
+              </span>
+              <div>
+                <p className="font-[family-name:var(--font-family-display)] text-[length:var(--font-size-lg)] font-[var(--font-weight-bold)] text-[var(--color-text-primary)]">
+                  {t.resTitle}
+                </p>
+                <p className="mt-[var(--space-1)] text-[length:var(--font-size-sm)] text-[var(--color-text-secondary)]">
+                  {t.resSubtitle}
+                </p>
+              </div>
+            </Card>
+          </FadeUpOnScroll>
         </div>
       </div>
     </SectionShell>

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ConferencesManager } from "@/app/dashboard/conferences/ConferencesManager";
+import { ConferencesManager } from "../ConferencesManager";
 
 const mockFetch = jest.fn();
 

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useTranslations } from "@/i18n/provider";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import {
@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import type { Conference } from "@/types/conference";
 
 export function ConferenceCard({ conference }: { conference: Conference }) {
-  const { locale } = useLanguage();
+  const { locale } = useTranslations();
   const title = getConferenceTitle(conference, locale);
   const shortDescription = getConferenceShortDescription(conference, locale);
   const location = getConferenceLocation(conference, locale);

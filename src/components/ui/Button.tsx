@@ -16,11 +16,11 @@ type ButtonProps = Readonly<
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--color-primary)] text-[var(--color-text-inverse)] shadow-[var(--shadow-sm)] hover:bg-[var(--color-primary-strong)] hover:shadow-[var(--shadow-md)] active:translate-y-[1px]",
+    "bg-[var(--color-primary)] text-[var(--color-text-inverse)] shadow-[var(--shadow-sm)] hover:bg-[var(--color-primary-strong)] hover:shadow-[var(--shadow-md)] hover:scale-[1.05] active:scale-[0.98]",
   secondary:
-    "bg-[var(--color-surface)] text-[var(--color-text-primary)] ring-1 ring-inset ring-[var(--color-border)] shadow-[var(--shadow-sm)] hover:bg-[var(--color-surface-strong)] hover:ring-[var(--color-border-strong)] hover:shadow-[var(--shadow-md)] active:translate-y-[1px]",
+    "bg-[var(--color-surface)] text-[var(--color-text-primary)] ring-1 ring-inset ring-[var(--color-border)] shadow-[var(--shadow-sm)] hover:bg-[var(--color-surface-strong)] hover:ring-[var(--color-border-strong)] hover:shadow-[var(--shadow-md)] hover:scale-[1.05] active:scale-[0.98]",
   ghost:
-    "bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)] hover:text-[var(--color-text-primary)] active:translate-y-[1px]",
+    "bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)] hover:text-[var(--color-text-primary)] hover:scale-[1.05] active:scale-[0.98]",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

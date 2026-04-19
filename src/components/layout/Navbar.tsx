@@ -1,11 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { CalendarCheck2, Home, Menu, Stethoscope, Wrench, X } from "lucide-react";
 
-import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useTranslations } from "@/i18n/provider";
 import { Container } from "@/components/layout/Container";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { useScroll } from "@/hooks/useScroll";
@@ -57,7 +58,7 @@ const drawerItems = [
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { locale } = useLanguage();
+  const { locale } = useTranslations();
   const { activeSection, isScrolled, scrollToSection } = useScroll();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -122,9 +123,16 @@ export function Navbar() {
             onClick={() => navigateToSection("top", "/")}
             type="button"
           >
-            <span className="inline-flex size-[var(--space-10)] shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-soft)] text-[length:var(--font-size-xs)] font-[var(--font-weight-bold)] uppercase tracking-[var(--tracking-eyebrow)] text-[var(--color-primary-strong)]">
-              SA
-            </span>
+            <div className="relative h-[2.85rem] w-[2.85rem] shrink-0 overflow-hidden rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-white shadow-sm md:h-[3.25rem] md:w-[3.25rem]">
+              <Image
+                src="/images/logo.png"
+                alt="SATT Logo"
+                fill
+                className="object-contain p-[0.2rem]"
+                sizes="(max-width: 52px) 100vw, 52px"
+                priority
+              />
+            </div>
             <span className="line-clamp-2 text-start font-[family-name:var(--font-family-display)] text-[length:var(--font-size-xs)] font-[var(--font-weight-bold)] leading-[var(--line-height-snug)] tracking-[0.01em] text-[var(--color-text-primary)] sm:text-[length:var(--font-size-sm)]">
               {locale === "ar"
                 ? "الجمعية العلمية للعلاج الموجه"

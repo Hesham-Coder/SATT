@@ -1,4 +1,4 @@
-﻿import { randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { promises as fsPromises } from "node:fs";
 import path from "node:path";
 
@@ -76,9 +76,9 @@ export async function listMediaFiles(): Promise<MediaFile[]> {
     }),
   );
 
-  return entries
-    .filter((entry): entry is MediaFile => entry !== null)
-    .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
+  return (entries.filter((entry) => entry !== null) as MediaFile[]).sort(
+    (left, right) => right.updatedAt.localeCompare(left.updatedAt),
+  );
 }
 
 async function optimizeImageBuffer(buffer: Buffer) {

@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "doctors": "Doctors",
+    "bookNow": "Book Now",
+    "conferences": "Conferences",
+    "research": "Research",
+    "navigation": "Navigation"
+  },
+  "hero": {
+    "badge": "Scientific Association of Targeted Therapy",
+    "defaultTitle": "Building a leading platform to support continuous progress in oncology care.",
+    "defaultDesc": "We strive to enhance continuous medical education and keep pace with the latest developments in targeted therapies, supporting continuous progress in oncology patient care.",
+    "bookBtn": "Book Now",
+    "doctorsBtn": "Meet the Doctors",
+    "feature1": "Advanced platforms for sharing expertise and supporting scientific research.",
+    "feature2": "Educational programs aligned with the latest targeted and immunotherapy discoveries.",
+    "feature3": "Professional awareness enhancing precision in treatment plans and genetic evaluations.",
+    "medicalField": "Medical Field",
+    "modernOncology": "Modern Oncology",
+    "ongoingInitiative": "Ongoing Initiative",
+    "primaryFocus": "Primary Focus",
+    "targetedTherapy": "Targeted Therapy",
+    "scopeOfWork": "Scope of Work",
+    "geneticScans": "Genetic Scans"
+  },
+  "about": {
+    "eyebrow": "About the Association",
+    "defaultTitle": "A care and knowledge ecosystem built on clarity and results",
+    "desc": "Clear and highly actionable content for patients and doctors: what we offer, how we help, and the expected outcomes.",
+    "benefitTitle": "What will the patient gain?",
+    "benefit1": "• Clearer treatment plans based on modern evidence.",
+    "benefit2": "• Faster access to the appropriate medical specialty.",
+    "benefit3": "• Simpler understanding of genetic testing and treatment options.",
+    "q1": "How do we ensure medical content quality?",
+    "a1": "Every scientific article undergoes peer review by specialists, with periodic updates following the latest global recommendations.",
+    "q2": "When does the impact of educational programs emerge?",
+    "a2": "Within weeks of practical application, especially regarding the precision of therapeutic decisions and medical team integration.",
+    "confTitle": "Conferences",
+    "confSubtitle": "Platforms for discussion and knowledge exchange",
+    "resTitle": "Research",
+    "resSubtitle": "Supporting and encouraging scientific innovation"
+  },
+  "pillars": {
+    "eyebrow": "Our Goals",
+    "title": "Our pillars to support specialists and elevate oncology.",
+    "desc": "The association's efforts are based on four main pillars to enhance knowledge and support medical practices in oncology.",
+    "all": "All",
+    "showing": "Showing",
+    "single": "pillar",
+    "dual": "pillars",
+    "plural": "pillars",
+    "mainPillar": "Main Pillar",
+    "pillar1Title": "Continuous Medical Education",
+    "pillar1Desc": "Providing advanced educational and training programs in targeted and immunotherapies for oncology specialists.",
+    "pillar2Title": "Knowledge Exchange",
+    "pillar2Desc": "Providing scientific platforms for knowledge and expertise exchange between specialists and researchers in oncology.",
+    "pillar3Title": "Scientific Research Support",
+    "pillar3Desc": "Encouraging and supporting innovative scientific research in targeted therapy and immunotherapy to advance medical care methodologies.",
+    "pillar4Title": "Targeted & Genetic Therapy Updates",
+    "pillar4Desc": "Raising awareness of the latest scientific breakthroughs in targeted therapies and molecular/genetic testing to guide treatment plans."
+  },
+  "doctors": {
+    "eyebrow": "Doctors",
+    "title": "Specialized Medical Team in Precision Medicine",
+    "desc": "Meet our medical team and their specialized expertise, then book a consultation in just two steps.",
+    "bullets": [
+      "Response within 24 hours",
+      "Simplified and clear treatment plan"
+    ],
+    "btn": "Book Consultation"
+  },
+  "conferences": {
+    "eyebrow": "Conferences",
+    "title": "Scientific Conferences & Events",
+    "desc": "Explore scientific conferences and events with rich media, multilingual content, and full program details.",
+    "filterText": "Filter by category and search by title before opening the full conference page.",
+    "all": "All",
+    "search": "Search",
+    "searchPlaceholder": "Search conferences...",
+    "viewAll": "View All Conferences",
+    "noItems": "Upcoming conferences and events will be added soon.",
+    "noResults": "No conferences matched your search."
+  },
+  "research": {
+    "eyebrow": "Research",
+    "title": "Our Publications and Research Partnerships",
+    "desc": "The latest clinical research, scientific reviews, and studies in immunotherapy and targeted therapy.",
+    "all": "All",
+    "search": "Search",
+    "searchPlaceholder": "Search research...",
+    "noResults": "No research matched your search."
+  },
+  "contact": {
+    "eyebrow": "Contact Us",
+    "title": "How can we collaborate together?",
+    "desc": "We welcome your communication and inquiries regarding joining the association, participating in scientific research, or any other suggestions.",
+    "joinUs": "Join Us",
+    "joinSubtitle": "Working together to support research and medical education.",
+    "joinDesc": "Share your inquiries about events, academic partnerships, or memberships. We respond to your messages as quickly as possible.",
+    "successMessage": "Thank you, your message has been sent successfully. We will get back to you soon.",
+    "defaultWaitMessage": "We typically reply within one business day.",
+    "directCall": "Direct Call",
+    "whatsapp": "WhatsApp",
+    "name": "Name",
+    "namePlaceholder": "Your Full Name",
+    "email": "Email Address",
+    "emailPlaceholder": "name@example.com",
+    "message": "Your Message",
+    "messagePlaceholder": "Tell us about your inquiry...",
+    "guarantee": "We guarantee the protection of your information.",
+    "submitBtn": "Send Message"
+  },
+  "footer": {
+    "badge": "Scientific Association of Targeted Therapy",
+    "title": "Building a leading platform to support doctors and researchers.",
+    "desc": "The association aims to enhance continuous medical education and keep pace with the latest developments in targeted therapies and genetic testing, supporting continuous progress in oncology patient care.",
+    "copyright": "Copyright 2026 Scientific Association of Targeted Therapy",
+    "rights": "All Rights Reserved"
+  }
+}

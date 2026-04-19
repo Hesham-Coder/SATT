@@ -406,7 +406,7 @@ router.post('/api/admin/restore', requireAuth, restoreLimiter, doubleCsrfProtect
     logger.error('Restore failed', { error: error.message });
     res.status(500).json({ error: 'Restore failed' });
   } finally {
-    fs.unlink(zipPath).catch(() => {});
+    fs.unlink(zipPath).catch(() => { });
   }
 });
 
@@ -414,7 +414,7 @@ router.post('/api/admin/restore', requireAuth, restoreLimiter, doubleCsrfProtect
 router.post('/api/admin/backup', requireAuth, doubleCsrfProtection(), async (req, res) => {
   try {
     const result = await createBackup();
-    
+
     if (!result.success) {
       logger.error('Backup creation failed', { message: result.message });
       return res.status(500).json({ error: result.message || 'Backup creation failed' });
@@ -446,7 +446,7 @@ router.post('/api/admin/backup', requireAuth, doubleCsrfProtection(), async (req
 router.get('/api/admin/backups', requireAuth, async (req, res) => {
   try {
     const backups = await listBackups();
-    
+
     res.json({
       success: true,
       count: backups.length,
@@ -467,14 +467,14 @@ router.get('/api/admin/backups', requireAuth, async (req, res) => {
 router.get('/api/admin/backup/download/:filename', requireAuth, async (req, res) => {
   try {
     const filename = String(req.params.filename || '');
-    
+
     // Sanitize filename to prevent directory traversal
     if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
       return res.status(400).json({ error: 'Invalid backup filename' });
     }
 
     const backupPath = safeJoin(BACKUPS_DIR, filename);
-    
+
     try {
       await fs.access(backupPath);
     } catch {

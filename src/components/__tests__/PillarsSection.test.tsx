@@ -2,12 +2,18 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { PillarsSection } from "@/components/sections/PillarsSection";
+import { TranslationProvider } from "@/i18n/provider";
+import messages from "../../../messages/ar.json";
 
 describe("PillarsSection integration", () => {
   it("filters pillars when a focus area pill is selected", async () => {
     const user = userEvent.setup();
 
-    render(<PillarsSection />);
+    render(
+      <TranslationProvider locale="ar" messages={messages}>
+        <PillarsSection />
+      </TranslationProvider>
+    );
 
     expect(screen.getByText(/عرض 4 محاور/i)).toBeInTheDocument();
 

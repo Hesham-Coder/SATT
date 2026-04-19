@@ -2,6 +2,17 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { Navbar } from "@/components/layout/Navbar";
+import { TranslationProvider } from "@/i18n/provider";
+import messages from "../../../messages/ar.json";
+
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+  usePathname: () => "/",
+}));
 
 describe("Navbar integration", () => {
   beforeEach(() => {
@@ -33,9 +44,13 @@ describe("Navbar integration", () => {
   it("scrolls smoothly when a nav item is clicked", async () => {
     const user = userEvent.setup();
 
-    render(<Navbar />);
+    render(
+      <TranslationProvider locale="ar" messages={messages}>
+        <Navbar />
+      </TranslationProvider>
+    );
 
-    await user.click(screen.getAllByRole("button", { name: "تواصل معنا" })[0]);
+    await user.click(screen.getAllByRole("link", { name: "احجز الآن" })[0]);
 
     expect(
       document.getElementById("contact")?.scrollIntoView,
