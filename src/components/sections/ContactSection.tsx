@@ -91,7 +91,7 @@ export function ContactSection() {
                 name="email"
                 onChange={(event) => handleChange("email", event.target.value)}
                 placeholder={t("emailPlaceholder") as string}
-                type="email"
+                type="text"
                 value={values.email}
               />
               <div className="space-y-[var(--space-2)]">
