@@ -5,6 +5,16 @@ const command = process.execPath;
 const nextBin = path.join(process.cwd(), "node_modules", "next", "dist", "bin", "next");
 const env = { ...process.env, NODE_ENV: "production" };
 
+const prismaBin = path.join(process.cwd(), "node_modules", "prisma", "build", "index.js");
+
+console.log("Generating Prisma Client...");
+spawnSync(command, [prismaBin, "generate"], {
+  stdio: "inherit",
+  env,
+  shell: false,
+});
+
+console.log("Starting Next.js build...");
 const result = spawnSync(command, [nextBin, "build"], {
   stdio: "inherit",
   env,
