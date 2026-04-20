@@ -19,11 +19,21 @@ const initialValues: FormValues = {
   name: "",
 };
 
+function validateEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 function validate(values: FormValues): FormErrors {
   const errors: FormErrors = {};
 
   if (!values.name.trim()) {
     errors.name = "الاسم مطلوب.";
+  }
+
+  if (!values.email.trim()) {
+    errors.email = "البريد الإلكتروني مطلوب.";
+  } else if (!validateEmail(values.email)) {
+    errors.email = "أدخل عنوان بريد إلكتروني صالح.";
   }
 
   if (!values.message.trim()) {
