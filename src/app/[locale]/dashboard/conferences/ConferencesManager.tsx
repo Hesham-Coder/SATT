@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type { ChangeEvent, DragEvent } from "react";
 
@@ -148,38 +148,8 @@ function formatSize(sizeInBytes: number) {
   return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function validateFormValues(values: ConferenceFormValues) {
-  const errors: FieldErrors = {};
-
-  if (!values.title.ar.trim()) {
-    errors.titleAr = TITLE_REQUIRED_ERROR;
-  }
-
-  if (!values.title.en.trim()) {
-    errors.titleEn = TITLE_REQUIRED_ERROR;
-  }
-
-  if (!values.description.ar.trim()) {
-    errors.descriptionAr = DESCRIPTION_REQUIRED_ERROR;
-  }
-
-  if (!values.description.en.trim()) {
-    errors.descriptionEn = DESCRIPTION_REQUIRED_ERROR;
-  }
-
-  if (!values.date.trim()) {
-    errors.date = DATE_REQUIRED_ERROR;
-  }
-
-  if (values.images.some((image) => !isValidImageUrl(image))) {
-    errors.manualImage = IMAGE_URL_VALIDATION_ERROR;
-  }
-
-  if (values.videos.some((video) => !isValidVideoUrl(video))) {
-    errors.manualVideo = VIDEO_URL_VALIDATION_ERROR;
-  }
-
-  return errors;
+function validateFormValues(_values: ConferenceFormValues) {
+  return {};
 }
 
 export function ConferencesManager({ initialData }: { initialData: Conference[] }) {
@@ -425,23 +395,6 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
       return false;
     }
 
-    if (listKey === "images" && !isValidImageUrl(trimmed)) {
-      setFieldErrors((current) => ({ ...current, manualImage: IMAGE_URL_VALIDATION_ERROR }));
-      setStatus({ kind: "error", message: "Invalid image URL" });
-      return false;
-    }
-
-    if (listKey === "videos" && !isValidVideoUrl(trimmed)) {
-      setFieldErrors((current) => ({ ...current, manualVideo: VIDEO_URL_VALIDATION_ERROR }));
-      setStatus({ kind: "error", message: "Invalid video URL" });
-      return false;
-    }
-
-    setFieldErrors((current) => ({
-      ...current,
-      [listKey === "images" ? "manualImage" : "manualVideo"]: undefined,
-    }));
-
     updateForm(listKey, Array.from(new Set([...formValues[listKey], trimmed])));
     return true;
   }
@@ -449,12 +402,6 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
   async function handleSubmit() {
     const nextErrors = validateFormValues(formValues);
     setFieldErrors(nextErrors);
-
-    if (Object.values(nextErrors).some(Boolean)) {
-      const firstError = Object.values(nextErrors).find(Boolean) || "Please fix form errors";
-      setStatus({ kind: "error", message: firstError });
-      return;
-    }
 
     setLoading(true);
     setStatus(null);
@@ -566,7 +513,6 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
                 onChange={(event) => updateLocalizedField("title", "ar", event.target.value)}
                 value={formValues.title.ar}
                 error={fieldErrors.titleAr}
-                required
               />
               <Input
                 id="title-en"
@@ -574,7 +520,6 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
                 onChange={(event) => updateLocalizedField("title", "en", event.target.value)}
                 value={formValues.title.en}
                 error={fieldErrors.titleEn}
-                required
               />
               <Input
                 id="location-ar"
@@ -682,7 +627,6 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
                 type="date"
                 value={formValues.date}
                 error={fieldErrors.date}
-                required
               />
               <Input
                 id="category-key"

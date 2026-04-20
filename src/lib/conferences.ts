@@ -114,12 +114,8 @@ export function mapConferenceRecord(record: ConferenceRecord): Conference {
     record.descriptionEn || record.fullDescription,
     record.description,
   );
-  const images = asStringArray(record.images)
-    .map(normalizeMediaUrl)
-    .filter((value) => isValidImageUrl(value));
-  const videos = asStringArray(record.videos)
-    .map(normalizeMediaUrl)
-    .filter((value) => isValidVideoUrl(value));
+  const images = asStringArray(record.images).map(normalizeMediaUrl);
+  const videos = asStringArray(record.videos).map(normalizeMediaUrl);
 
   return {
     id: record.id,
@@ -134,7 +130,7 @@ export function mapConferenceRecord(record: ConferenceRecord): Conference {
     category: {
       key: sanitizeText(record.categoryKey) || inferCategoryKey(record.categoryEn || record.categoryAr || "general"),
       label: {
-          ar: sanitizeText(record.categoryAr) || sanitizeText(record.categoryEn) || "عام",
+        ar: sanitizeText(record.categoryAr) || sanitizeText(record.categoryEn) || "عام",
         en: sanitizeText(record.categoryEn) || sanitizeText(record.categoryAr) || "General",
       },
     },
@@ -209,20 +205,12 @@ function uniqueTrimmed(values: string[]) {
   );
 }
 
-function validateImagesOrThrow(values: string[]) {
-  const invalid = values.filter((value) => !isValidImageUrl(value));
-
-  if (invalid.length > 0) {
-    throw new Error(IMAGE_URL_VALIDATION_ERROR);
-  }
+function validateImagesOrThrow(_values: string[]) {
+  // Disabled
 }
 
-function validateVideosOrThrow(values: string[]) {
-  const invalid = values.filter((value) => !isValidVideoUrl(value));
-
-  if (invalid.length > 0) {
-    throw new Error(VIDEO_URL_VALIDATION_ERROR);
-  }
+function validateVideosOrThrow(_values: string[]) {
+  // Disabled
 }
 
 export function parseCommaSeparatedList(value: string) {

@@ -38,12 +38,6 @@ export function ResearchManager({ initialData }: { initialData: ResType[] }) {
       .map((value) => value.trim())
       .filter(Boolean);
 
-    if (imageValues.some((value) => !isValidImageUrl(value))) {
-      setErrorMessage(IMAGE_URL_VALIDATION_ERROR);
-      setLoading(false);
-      return;
-    }
-
     setErrorMessage("");
     setLoading(true);
     const response = await saveResearch(formData);
@@ -69,10 +63,10 @@ export function ResearchManager({ initialData }: { initialData: ResType[] }) {
             </div>
           ) : null}
           <input type="hidden" name="id" value={currentRes.id || ""} />
-          <Input label="العنوان" name="title" defaultValue={currentRes.title || ""} required />
-          <Input label="الباحث/المؤلف" name="author" defaultValue={currentRes.author || ""} required />
-          <Input label="تاريخ النشر" name="publishDate" defaultValue={currentRes.publishDate || ""} required />
-          <Input label="التصنيف" name="category" defaultValue={currentRes.category || ""} required />
+          <Input label="العنوان" name="title" defaultValue={currentRes.title || ""} />
+          <Input label="الباحث/المؤلف" name="author" defaultValue={currentRes.author || ""} />
+          <Input label="تاريخ النشر" name="publishDate" defaultValue={currentRes.publishDate || ""} />
+          <Input label="التصنيف" name="category" defaultValue={currentRes.category || ""} />
           
           <div className="space-y-[var(--space-2)]">
             <label className="block text-[length:var(--font-size-xs)] font-[var(--font-weight-semibold)] text-[var(--color-text-secondary)]">
@@ -81,7 +75,6 @@ export function ResearchManager({ initialData }: { initialData: ResType[] }) {
             <textarea 
               name="abstract" 
               defaultValue={currentRes.abstract || ""} 
-              required
               className="w-full min-h-[60px] border rounded p-2"
             />
           </div>
@@ -93,7 +86,6 @@ export function ResearchManager({ initialData }: { initialData: ResType[] }) {
             <textarea 
               name="content" 
               defaultValue={currentRes.content || ""} 
-              required
               className="w-full min-h-[150px] border rounded p-2"
             />
           </div>

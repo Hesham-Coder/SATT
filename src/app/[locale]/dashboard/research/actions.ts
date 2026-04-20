@@ -33,10 +33,6 @@ export async function saveResearch(formData: FormData) {
         .filter(Boolean)
       : [];
 
-    if (imageList.length !== sanitizeImageUrls(imageList).length) {
-      return { error: IMAGE_URL_VALIDATION_ERROR };
-    }
-
     const data = {
       title,
       abstract,
