@@ -18,3 +18,26 @@ if (result.status !== 0) {
 }
 
 console.log("Database synchronized successfully.");
+  
+// Use current process.env to ensure Railway variables like ADMIN_EMAIL are passed through
+const ensureAdminScript = path.join(process.cwd(), "scripts", "ensure-admin-user.js");
+console.log(`Synchronizing admin user from environment variables...`);
+
+try {
+  const adminResult = spawnSync(command, [ensureAdminScript], {
+    stdio: "inherit",
+    env: { ...process.env }, // Ensure all env vars are passed
+    shell: false,
+  });
+
+  if (adminResult.status !== 0) {
+    console.error(`Admin user synchronization failed with exit code ${adminResult.status || 'unknown'}.`);
+    // We don't exit(1) here to allow the main app to try starting even if admin sync was partial
+  } else {
+    console.log("Admin user synchronization successful.");
+  }
+} catch (error) {
+  console.error("Failed to execute admin synchronization script:", error.message);
+}
+
+process.exit(0);

@@ -4,17 +4,27 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = process.env.E2E_ADMIN_EMAIL || "admin@satt.org";
-  const password = process.env.E2E_ADMIN_PASSWORD || "admin";
-  const name = process.env.E2E_ADMIN_NAME || "Admin";
+  const email = process.env.ADMIN_EMAIL || process.env.E2E_ADMIN_EMAIL || "admin@satt.org";
+  const password = process.env.ADMIN_PASSWORD || process.env.E2E_ADMIN_PASSWORD || "admin";
+  const name = process.env.ADMIN_NAME || process.env.E2E_ADMIN_NAME || "Admin";
+
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
 
   if (existingUser) {
+    // Synchronize password and name if they changed
+    await prisma.user.update({
+      where: { email },
+      data: {
+        password: hashedPassword,
+        name,
+        role: "admin",
+      },
+    });
+    console.log(`Admin user ${email} synchronized.`);
     return;
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
 
   await prisma.user.create({
     data: {
@@ -24,6 +34,7 @@ async function main() {
       role: "admin",
     },
   });
+  console.log(`Admin user ${email} created.`);
 }
 
 main()
