@@ -11,6 +11,8 @@ import { motion } from "framer-motion";
 import { StaggerContainer } from "@/components/ui/motion/StaggerContainer";
 import { MotionWrapper } from "@/components/ui/motion/MotionWrapper";
 
+import Image from "next/image";
+
 export function HeroSection({
   titleCMS,
   descriptionCMS,
@@ -114,12 +116,15 @@ export function HeroSection({
           }}
         >
           <div className="absolute inset-0 translate-x-[5%] translate-y-[5%] rounded-[var(--radius-2xl)] bg-[var(--color-primary)] opacity-10" />
-          <img
+          <Image
             alt={t("medicalField") as string}
             className="relative size-full rounded-[var(--radius-2xl)] object-cover shadow-[var(--shadow-lg)]"
             src={imageUrl || "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2000&auto=format&fit=crop"}
+            fill
+            priority
           />
         </motion.div>
+
       </Container>
     </SectionShell>
   );

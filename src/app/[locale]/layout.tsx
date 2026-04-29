@@ -1,27 +1,10 @@
 import type { Metadata } from "next";
-import { DM_Sans, Plus_Jakarta_Sans, Tajawal } from "next/font/google";
+import type { ReactNode } from "react";
 
-import "@/app/globals.css";
 import { ConversionActions } from "@/components/layout/ConversionActions";
-import { getSeoSettings } from "@/lib/seo";
 import { getDictionary, type SupportedLocale } from "@/i18n/server";
 import { TranslationProvider } from "@/i18n/provider";
-
-const sans = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
-const display = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-display",
-});
-
-const arabic = Tajawal({
-  subsets: ["arabic"],
-  weight: ["200", "300", "400", "500", "700", "800", "900"],
-  variable: "--font-arabic",
-});
+import { getSeoSettings } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoSettings();
@@ -40,8 +23,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       languages: {
-        ar: '/ar',
-        en: '/en',
+        ar: "/ar",
+        en: "/en",
       },
     },
     openGraph: {
@@ -61,29 +44,20 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-type RootLayoutProps = Readonly<{
-  children: React.ReactNode;
+type LocaleLayoutProps = Readonly<{
+  children: ReactNode;
   params: Promise<{ locale: string }>;
 }>;
 
-export default async function RootLayout({ children, params }: RootLayoutProps) {
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params;
-  const validLocale = locale as SupportedLocale;
+  const validLocale: SupportedLocale = locale === "en" ? "en" : "ar";
   const messages = await getDictionary(validLocale);
 
   return (
-    <html
-      lang={locale}
-      dir={locale === "ar" ? "rtl" : "ltr"}
-      suppressHydrationWarning
-    >
-      <body className={`${sans.variable} ${display.variable} ${arabic.variable}`}>
-        <TranslationProvider locale={validLocale} messages={messages}>
-          {children}
-          <ConversionActions />
-        </TranslationProvider>
-      </body>
-    </html>
+    <TranslationProvider locale={validLocale} messages={messages}>
+      {children}
+      <ConversionActions />
+    </TranslationProvider>
   );
 }
-

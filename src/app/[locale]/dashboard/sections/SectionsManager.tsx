@@ -112,6 +112,23 @@ export function SectionsManager({ initialData }: { initialData: SiteSettingsData
           </div>
         </div>
 
+        <div className="space-y-4 pt-4 border-t">
+          <h3 className="text-lg font-semibold text-[var(--color-primary)]">إعدادات الأقسام الإضافية</h3>
+          <div className="flex items-center gap-4">
+            <label className="text-[length:var(--font-size-sm)] font-[var(--font-weight-medium)]">
+              عرض قسم الفريق الطبي (Doctors Section):
+            </label>
+            <select 
+              name="showDoctorsSection" 
+              defaultValue={initialData?.showDoctorsSection ? "true" : "false"}
+              className="border rounded p-1"
+            >
+              <option value="true">عرض</option>
+              <option value="false">إخفاء</option>
+            </select>
+          </div>
+        </div>
+
         <div>
           <Button type="submit" loading={loading} size="lg">حفظ التغييرات</Button>
         </div>

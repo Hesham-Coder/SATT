@@ -11,7 +11,8 @@ const DEFAULT_TITLE = "الجمعية العلمية للعلاج الموجه";
 const DEFAULT_DESCRIPTION =
   "الجمعية العلمية للعلاج الموجه توفر منصة للتعليم الطبي المستمر وتبادل الخبرات ودعم الأبحاث.";
 const DEFAULT_SITE_URL = "http://localhost:3000";
-const DEFAULT_OG_IMAGE_PATH = "/uploads/seo-og-image.jpg";
+const DEFAULT_OG_IMAGE_PATH = "/og-image.png";
+
 
 function resolveSiteUrl() {
   const raw = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || DEFAULT_SITE_URL;

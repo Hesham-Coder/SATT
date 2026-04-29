@@ -81,8 +81,8 @@ export function ConferenceCard({ conference }: { conference: Conference }) {
 
         {tags.length > 0 && (
           <ul className="flex flex-wrap gap-[var(--space-2)]">
-            {tags.slice(0, 3).map((tag) => (
-              <li key={tag}>
+            {tags.slice(0, 3).map((tag, index) => (
+              <li key={`${tag}-${index}`}>
                 <Badge>{tag}</Badge>
               </li>
             ))}

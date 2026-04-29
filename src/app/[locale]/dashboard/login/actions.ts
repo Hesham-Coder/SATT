@@ -1,16 +1,21 @@
 "use server";
 
+import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
+
 import { encrypt } from "@/lib/auth";
 import prisma from "@/lib/db";
-import bcrypt from "bcryptjs";
+
+const LOGIN_REQUIRED_ERROR = "الرجاء إدخال البريد الإلكتروني وكلمة المرور.";
+const LOGIN_FAILED_ERROR = "بيانات تسجيل الدخول غير صحيحة.";
+const LOGIN_UNAVAILABLE_ERROR = "تعذر تسجيل الدخول حالياً. حاول مرة أخرى.";
 
 export async function login(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const password = String(formData.get("password") ?? "");
 
   if (!email || !password) {
-    return { error: "الرجاء إدخال البريد الإلكتروني وكلمة المرور." };
+    return { error: LOGIN_REQUIRED_ERROR };
   }
 
   let user: { id: string; email: string; name: string | null; role: string; password: string } | null = null;
@@ -18,16 +23,16 @@ export async function login(formData: FormData) {
   try {
     user = await prisma.user.findUnique({ where: { email } });
   } catch {
-    return { error: "تعذر تسجيل الدخول حالياً. حاول مرة أخرى." };
+    return { error: LOGIN_UNAVAILABLE_ERROR };
   }
 
   if (!user) {
-    return { error: "البريد الإلكتروني غير صحيح." };
+    return { error: LOGIN_FAILED_ERROR };
   }
 
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) {
-    return { error: "كلمة المرور غير صحيحة." };
+    return { error: LOGIN_FAILED_ERROR };
   }
 
   const sessionData = {
@@ -43,9 +48,10 @@ export async function login(formData: FormData) {
   const cookieStore = await cookies();
   cookieStore.set("session", encryptedSession, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 7,
     path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
   });
 
   return { success: true };

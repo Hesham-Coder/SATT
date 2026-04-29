@@ -1,18 +1,21 @@
 import { act, renderHook } from "@testing-library/react";
 
-import { useForm } from "@/hooks/useForm";
+import { submitContactForm } from "@/app/actions/contact";
+import { useContactForm } from "@/hooks/useContactForm";
 
-describe("useForm", () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
+jest.mock("@/app/actions/contact", () => ({
+  submitContactForm: jest.fn(),
+}));
 
+const mockedSubmitContactForm = jest.mocked(submitContactForm);
+
+describe("useContactForm", () => {
   afterEach(() => {
-    jest.useRealTimers();
+    mockedSubmitContactForm.mockReset();
   });
 
   it("reports validation errors for empty submissions", async () => {
-    const { result } = renderHook(() => useForm());
+    const { result } = renderHook(() => useContactForm());
 
     await act(async () => {
       await result.current.handleSubmit({
@@ -21,14 +24,16 @@ describe("useForm", () => {
     });
 
     expect(result.current.errors).toEqual({
-      email: "البريد الإلكتروني مطلوب.",
-      message: "الرسالة مطلوبة.",
-      name: "الاسم مطلوب.",
+      email: "Email is required",
+      message: "Message is required",
+      name: "Name is required",
     });
+    expect(mockedSubmitContactForm).not.toHaveBeenCalled();
   });
 
   it("submits successfully with valid values", async () => {
-    const { result } = renderHook(() => useForm());
+    mockedSubmitContactForm.mockResolvedValue({ success: true });
+    const { result } = renderHook(() => useContactForm());
 
     act(() => {
       result.current.handleChange("name", "Jane");
@@ -37,13 +42,16 @@ describe("useForm", () => {
     });
 
     await act(async () => {
-      const submitPromise = result.current.handleSubmit({
+      await result.current.handleSubmit({
         preventDefault: jest.fn(),
       } as never);
-      jest.advanceTimersByTime(900);
-      await submitPromise;
     });
 
+    expect(mockedSubmitContactForm).toHaveBeenCalledWith({
+      email: "jane@example.com",
+      message: "Hello there",
+      name: "Jane",
+    });
     expect(result.current.submitStatus).toBe("success");
     expect(result.current.values).toEqual({
       email: "",

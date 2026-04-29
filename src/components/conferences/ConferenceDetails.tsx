@@ -45,8 +45,8 @@ export function ConferenceDetails({
           <div className="space-y-[var(--space-4)]">
             <div className="flex flex-wrap items-center gap-[var(--space-2)]">
               <Badge>{category}</Badge>
-              {tags.slice(0, 4).map((tag) => (
-                <Badge className="bg-[var(--color-surface-muted)]" key={tag}>
+              {tags.slice(0, 4).map((tag, index) => (
+                <Badge className="bg-[var(--color-surface-muted)]" key={`${tag}-${index}`}>
                   {tag}
                 </Badge>
               ))}
@@ -110,9 +110,10 @@ export function ConferenceDetails({
             <h2 className="font-[family-name:var(--font-family-display)] text-[length:var(--font-size-2xl)] font-[var(--font-weight-bold)] text-[var(--color-text-primary)]">
               {locale === "ar" ? "الوصف الكامل" : "Full Description"}
             </h2>
-            <p className="whitespace-pre-wrap text-[length:var(--font-size-md)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)]">
-              {description}
-            </p>
+            <div 
+              className="prose prose-slate max-w-none prose-headings:font-[family-name:var(--font-family-display)] text-[length:var(--font-size-md)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)]"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
           </div>
         </section>
 

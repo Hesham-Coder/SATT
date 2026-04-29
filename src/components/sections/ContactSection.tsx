@@ -5,20 +5,30 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { SectionShell } from "@/components/ui/SectionShell";
-import { useForm } from "@/hooks/useForm";
+import { useContactForm } from "@/hooks/useContactForm";
+
 
 import { FadeUpOnScroll } from "@/components/ui/motion/FadeUpOnScroll";
 
 export function ContactSection() {
-  const { t } = useTranslations("contact");
+  const { t, locale } = useTranslations("contact");
+  const requiredMessage = (label: string) =>
+    locale === "ar" ? `${label} مطلوب.` : `${label} is required`;
   const {
     errors,
     handleChange,
     handleSubmit,
     isSubmitting,
     submitStatus,
+    errorMessage,
     values,
-  } = useForm();
+  } = useContactForm({
+    nameRequired: requiredMessage(t("name") as string),
+    emailRequired: requiredMessage(t("email") as string),
+    emailInvalid: "Invalid email address",
+    messageRequired: requiredMessage(t("message") as string),
+  });
+
 
   return (
     <SectionShell
@@ -44,12 +54,19 @@ export function ContactSection() {
             </p>
             <div
               aria-live="polite"
-              className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-[var(--space-4)] py-[var(--space-3)] text-[length:var(--font-size-xs)] text-[var(--color-text-secondary)]"
+              className={`rounded-[var(--radius-md)] border px-[var(--space-4)] py-[var(--space-3)] text-[length:var(--font-size-xs)] ${
+                submitStatus === "error" 
+                  ? "border-[var(--color-error)] bg-red-50 text-[var(--color-error)]" 
+                  : "border-[var(--color-border)] bg-[var(--color-surface-muted)] text-[var(--color-text-secondary)]"
+              }`}
             >
               {submitStatus === "success"
                 ? (t("successMessage") as string)
+                : submitStatus === "error"
+                ? (errorMessage || "An error occurred")
                 : (t("defaultWaitMessage") as string)}
             </div>
+
             <div className="grid gap-[var(--space-3)] sm:grid-cols-2">
               <a
                 className="inline-flex min-h-[var(--control-height-md)] items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-[var(--space-4)] text-[length:var(--font-size-sm)] font-[var(--font-weight-semibold)] text-[var(--color-text-inverse)] transition-transform hover:scale-[1.05] active:scale-[0.98]"

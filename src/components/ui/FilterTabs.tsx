@@ -15,7 +15,7 @@ export function FilterTabs({
 }: FilterTabsProps) {
   return (
     <div className="flex flex-wrap gap-[var(--space-2)]">
-      {filters.map((filter) => {
+      {filters.map((filter, index) => {
         const isActive = filter === activeFilter;
 
         return (
@@ -27,7 +27,7 @@ export function FilterTabs({
                 ? "border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-strong)]"
                 : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)] active:border-[var(--color-primary)]",
             )}
-            key={filter}
+            key={`${filter}-${index}`}
             onClick={() => onFilterChange(filter)}
             type="button"
           >

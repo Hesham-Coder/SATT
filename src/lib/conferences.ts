@@ -1,10 +1,6 @@
 import type { Conference, ConferenceFormValues, SupportedLocale } from "@/types/conference";
-import {
-  IMAGE_URL_VALIDATION_ERROR,
-  VIDEO_URL_VALIDATION_ERROR,
-  isValidImageUrl,
-  isValidVideoUrl,
-} from "@/lib/validateImage";
+
+import { isValidImageUrl, isValidVideoUrl } from "@/lib/validateImage";
 
 type NullableString = string | null | undefined;
 
@@ -205,13 +201,6 @@ function uniqueTrimmed(values: string[]) {
   );
 }
 
-function validateImagesOrThrow(_values: string[]) {
-  // Disabled
-}
-
-function validateVideosOrThrow(_values: string[]) {
-  // Disabled
-}
 
 export function parseCommaSeparatedList(value: string) {
   return uniqueTrimmed(value.split(","));
@@ -235,9 +224,27 @@ export function normalizeConferencePayload(values: ConferenceFormValues) {
   const tagsAr = uniqueTrimmed(values.tags.ar);
   const tagsEn = uniqueTrimmed(values.tags.en);
   const images = uniqueTrimmed(values.images).map(normalizeMediaUrl);
-  validateImagesOrThrow(images);
   const videos = uniqueTrimmed(values.videos).map(normalizeMediaUrl);
-  validateVideosOrThrow(videos);
+
+  if (!titleAr && !titleEn) {
+    throw new Error("Title is required");
+  }
+
+  if (!descriptionAr && !descriptionEn) {
+    throw new Error("Description is required");
+  }
+
+  if (!sanitizeText(values.date)) {
+    throw new Error("Date is required");
+  }
+
+  if (images.some((image) => !isValidImageUrl(image))) {
+    throw new Error("Invalid image URL");
+  }
+
+  if (videos.some((video) => !isValidVideoUrl(video))) {
+    throw new Error("Invalid video URL");
+  }
 
   return {
     title: titleAr || titleEn,

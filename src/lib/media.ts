@@ -4,7 +4,7 @@ import path from "node:path";
 
 import sharp from "sharp";
 
-const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
+const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".avif"];
 const VIDEO_EXTENSIONS = [".mp4"];
 const ALL_EXTENSIONS = [...IMAGE_EXTENSIONS, ...VIDEO_EXTENSIONS];
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
@@ -54,14 +54,19 @@ export async function listMediaFiles(): Promise<MediaFile[]> {
         return null;
       }
 
-      const stats = await fsPromises.stat(path.join(getUploadsDir(), filename));
+      const filePath = path.join(getUploadsDir(), filename);
+      const stats = await fsPromises.stat(filePath);
       let width: number | undefined;
       let height: number | undefined;
 
       if (type === "image") {
-        const metadata = await sharp(path.join(getUploadsDir(), filename)).metadata();
-        width = metadata.width;
-        height = metadata.height;
+        try {
+          const metadata = await sharp(filePath).metadata();
+          width = metadata.width;
+          height = metadata.height;
+        } catch {
+          return null;
+        }
       }
 
       return {
@@ -94,7 +99,7 @@ export async function saveUploadedFile(file: File): Promise<MediaFile> {
   const extension = path.extname(file.name).toLowerCase();
 
   if (!ALL_EXTENSIONS.includes(extension)) {
-    throw new Error("Unsupported file type. Allowed: jpg, jpeg, png, webp, mp4.");
+    throw new Error("Unsupported file type. Allowed: jpg, jpeg, png, webp, avif, mp4.");
   }
 
   const type = getFileType(file.name);
@@ -107,6 +112,14 @@ export async function saveUploadedFile(file: File): Promise<MediaFile> {
 
   if (file.size > maxBytes) {
     throw new Error(type === "image" ? "Image file is too large." : "Video file is too large.");
+  }
+
+  if (type === "image" && !file.type.startsWith("image/")) {
+    throw new Error("Uploaded image has an invalid MIME type.");
+  }
+
+  if (type === "video" && file.type !== "video/mp4") {
+    throw new Error("Uploaded video has an invalid MIME type.");
   }
 
   await ensureUploadsDir();

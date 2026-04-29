@@ -3,20 +3,26 @@
 import prisma from "@/lib/db";
 import { normalizeConferencePayload } from "@/lib/conferences";
 import { revalidatePath } from "next/cache";
+import { requireAuth } from "@/lib/auth";
 
 export async function deleteConference(id: string) {
+  await requireAuth();
+
   try {
     await prisma.conference.delete({ where: { id } });
     revalidatePath("/dashboard/conferences");
     revalidatePath("/conferences");
     revalidatePath("/");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("Delete conference error:", error);
     return { error: "فشل الحذف" };
   }
 }
 
 export async function saveConference(formData: FormData) {
+  await requireAuth();
+
   try {
     const id = formData.get("id") as string;
     const data = normalizeConferencePayload({
@@ -63,7 +69,9 @@ export async function saveConference(formData: FormData) {
     revalidatePath("/conferences");
     revalidatePath("/");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("Save conference error:", error);
     return { error: "حدث خطأ أثناء الحفظ" };
   }
 }
+

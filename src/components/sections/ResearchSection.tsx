@@ -19,14 +19,17 @@ export function ResearchSection({ researchArticles }: { researchArticles: Resear
 
   const filters = useMemo(() => {
     const allCategories = new Set<string>();
-    researchArticles.forEach((r) => allCategories.add(locale === 'en' && r.categoryEn ? r.categoryEn : r.category));
+    researchArticles.forEach((r) => {
+      const cat = locale === 'ar' ? (r.categoryAr || r.category) : (r.categoryEn || r.category);
+      allCategories.add(cat);
+    });
     return [allLabel, ...Array.from(allCategories)];
   }, [researchArticles, locale, allLabel]);
 
   const filteredArticles = useMemo(() => {
     return researchArticles.filter((r) => {
-      const title = locale === 'en' && r.titleEn ? r.titleEn : r.title;
-      const category = locale === 'en' && r.categoryEn ? r.categoryEn : r.category;
+      const title = locale === 'ar' ? (r.titleAr || r.title) : (r.titleEn || r.title);
+      const category = locale === 'ar' ? (r.categoryAr || r.category) : (r.categoryEn || r.category);
       const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesFilter = activeFilter === allLabel || category === activeFilter;
       return matchesSearch && matchesFilter;

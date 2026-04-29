@@ -4,7 +4,6 @@ import { useState } from "react";
 import { saveResearch, deleteResearch } from "./actions";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { IMAGE_URL_VALIDATION_ERROR, isValidImageUrl } from "@/lib/validateImage";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 
 type ResType = {
@@ -32,12 +31,6 @@ export function ResearchManager({ initialData }: { initialData: ResType[] }) {
   }
 
   async function handleSubmit(formData: FormData) {
-    const rawImages = String(formData.get("images") || "");
-    const imageValues = rawImages
-      .split(",")
-      .map((value) => value.trim())
-      .filter(Boolean);
-
     setErrorMessage("");
     setLoading(true);
     const response = await saveResearch(formData);

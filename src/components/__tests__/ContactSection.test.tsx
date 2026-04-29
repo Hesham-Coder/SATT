@@ -5,42 +5,34 @@ import { ContactSection } from "@/components/sections/ContactSection";
 import { TranslationProvider } from "@/i18n/provider";
 import messages from "../../../messages/ar.json";
 
+jest.mock("@/app/actions/contact", () => ({
+  submitContactForm: jest.fn(async () => ({ success: true })),
+}));
+
+const contactMessages = messages.contact;
+
 describe("ContactSection integration", () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   it("shows validation errors and success feedback", async () => {
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const user = userEvent.setup();
 
     render(
       <TranslationProvider locale="ar" messages={messages}>
         <ContactSection />
-      </TranslationProvider>
+      </TranslationProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: "إرسال الرسالة" }));
+    await user.click(screen.getByRole("button", { name: contactMessages.submitBtn }));
 
-    expect(screen.getByText("الاسم مطلوب.")).toBeInTheDocument();
-    expect(screen.getByText("البريد الإلكتروني مطلوب.")).toBeInTheDocument();
-    expect(screen.getByText("الرسالة مطلوبة.")).toBeInTheDocument();
+    expect(screen.getByText(`${contactMessages.name} مطلوب.`)).toBeInTheDocument();
+    expect(screen.getByText(`${contactMessages.email} مطلوب.`)).toBeInTheDocument();
+    expect(screen.getByText(`${contactMessages.message} مطلوب.`)).toBeInTheDocument();
 
-    await user.type(screen.getByLabelText("الاسم"), "Jane");
-    await user.type(screen.getByLabelText("البريد الإلكتروني"), "jane@example.com");
-    await user.type(screen.getByLabelText("رسالتك"), "We need a redesign.");
+    await user.type(screen.getByLabelText(contactMessages.name), "Jane");
+    await user.type(screen.getByLabelText(contactMessages.email), "jane@example.com");
+    await user.type(screen.getByLabelText(contactMessages.message), "We need a redesign.");
 
-    await user.click(screen.getByRole("button", { name: "إرسال الرسالة" }));
+    await user.click(screen.getByRole("button", { name: contactMessages.submitBtn }));
 
-    jest.advanceTimersByTime(900);
-
-    expect(
-      await screen.findByText(
-        "شكراً لك، تم إرسال رسالتك بنجاح وسنفيدك قريباً.",
-      ),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(contactMessages.successMessage)).toBeInTheDocument();
   });
 });

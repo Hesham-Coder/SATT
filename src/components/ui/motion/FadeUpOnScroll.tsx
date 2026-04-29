@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, HTMLMotionProps, useReducedMotion } from "framer-motion";
+import { motion, HTMLMotionProps } from "framer-motion";
 import { ReactNode } from "react";
 
 interface FadeUpOnScrollProps extends HTMLMotionProps<"div"> {
@@ -17,11 +17,9 @@ export function FadeUpOnScroll({
   delay = 0,
   ...props
 }: FadeUpOnScrollProps) {
-  const shouldReduceMotion = useReducedMotion();
-
   return (
     <motion.div
-      initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
       transition={{

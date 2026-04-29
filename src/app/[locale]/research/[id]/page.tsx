@@ -23,8 +23,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!article) return { title: "غير موجود" };
 
   const validLocale = locale as SupportedLocale;
-  const title = validLocale === "en" && article.titleEn ? article.titleEn : article.titleAr || article.title;
-  const description = validLocale === "en" && article.abstractEn ? article.abstractEn : article.abstractAr || article.abstract;
+  const title = validLocale === "ar" ? (article.titleAr || article.title) : (article.titleEn || article.title);
+  const description = validLocale === "ar" ? (article.abstractAr || article.abstract) : (article.abstractEn || article.abstract);
 
   return {
     title,
@@ -43,9 +43,10 @@ export default async function ResearchItemPage({ params }: Props) {
     notFound();
   }
 
-  const title = validLocale === "en" && article.titleEn ? article.titleEn : article.titleAr || article.title;
-  const category = validLocale === "en" && article.categoryEn ? article.categoryEn : article.categoryAr || article.category;
-  const content = validLocale === "en" && article.contentEn ? article.contentEn : article.contentAr || article.content;
+  const title = validLocale === "ar" ? (article.titleAr || article.title) : (article.titleEn || article.title);
+  const category = validLocale === "ar" ? (article.categoryAr || article.category) : (article.categoryEn || article.category);
+  const description = validLocale === "ar" ? (article.abstractAr || article.abstract) : (article.abstractEn || article.abstract);
+  const content = validLocale === "ar" ? (article.contentAr || article.content) : (article.contentEn || article.content);
 
   return (
     <>
@@ -75,11 +76,15 @@ export default async function ResearchItemPage({ params }: Props) {
             <MediaGallery images={article.relatedMedia.images} />
           )}
 
-          <div className="prose prose-slate max-w-none prose-headings:font-[family-name:var(--font-family-display)] rtl:prose-headings:text-right">
-            <p className="text-[length:var(--font-size-md)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)] whitespace-pre-wrap">
-              {content}
-            </p>
-          </div>
+          <div 
+            className="prose prose-slate max-w-none prose-headings:font-[family-name:var(--font-family-display)] text-[length:var(--font-size-md)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)]"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
+
+          <div 
+            className="prose prose-slate max-w-none prose-headings:font-[family-name:var(--font-family-display)] text-[length:var(--font-size-md)] leading-[var(--line-height-relaxed)] text-[var(--color-text-secondary)]"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
 
           {article.relatedMedia?.videos && article.relatedMedia.videos.length > 0 && (
             <div className="space-y-[var(--space-4)] pt-[var(--space-8)] border-t border-[var(--color-border)]">

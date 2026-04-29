@@ -2,8 +2,11 @@
 
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { requireAuth } from "@/lib/auth";
 
 export async function saveSettings(formData: FormData) {
+  await requireAuth();
+
   try {
     const heroTitle = formData.get("heroTitle") as string;
     const heroTitleEn = formData.get("heroTitleEn") as string;
@@ -12,7 +15,8 @@ export async function saveSettings(formData: FormData) {
     const aboutText = formData.get("aboutText") as string;
     const aboutTextEn = formData.get("aboutTextEn") as string;
     const heroImageUrl = formData.get("heroImageUrl") as string;
-
+    const showDoctorsSection = formData.get("showDoctorsSection") === "true";
+    
     const data = {
       heroTitle,
       heroTitleEn,
@@ -21,6 +25,7 @@ export async function saveSettings(formData: FormData) {
       aboutText,
       aboutTextEn,
       heroImageUrl,
+      showDoctorsSection,
     };
 
     await prisma.siteSettings.upsert({
@@ -32,10 +37,11 @@ export async function saveSettings(formData: FormData) {
     revalidatePath("/");
     revalidatePath("/ar");
     revalidatePath("/en");
-    revalidatePath("/ dashboard/sections");
+    revalidatePath("/dashboard/sections");
     return { success: true };
   } catch (error) {
     console.error("Save settings error:", error);
     return { error: "فشل الحفظ" };
   }
 }
+

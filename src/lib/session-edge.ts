@@ -1,4 +1,19 @@
 const encoder = new TextEncoder();
+const DEVELOPMENT_JWT_SECRET = "development_only_satt_jwt_secret_change_in_production";
+
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+
+  if (secret) {
+    return secret;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("JWT_SECRET is required in production");
+  }
+
+  return DEVELOPMENT_JWT_SECRET;
+}
 
 function base64UrlToUint8Array(value: string) {
   const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
@@ -31,7 +46,7 @@ export async function hasValidSessionToken(token: string) {
   }
 
   const [headerPart, payloadPart, signaturePart] = parts;
-  const secret = process.env.JWT_SECRET || "very_secure_and_random_string_for_satt_jwt";
+  const secret = getJwtSecret();
   const data = encoder.encode(`${headerPart}.${payloadPart}`);
   const signature = base64UrlToUint8Array(signaturePart);
 

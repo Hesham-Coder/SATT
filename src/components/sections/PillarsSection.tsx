@@ -28,7 +28,7 @@ export function PillarsSection() {
       <div className="space-y-[var(--space-8)]">
         <FadeUpOnScroll className="flex flex-col gap-[var(--space-4)] lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap gap-[var(--space-2)]">
-            {filters.map((filter) => {
+            {filters.map((filter, index) => {
               const isActive = filter === activeFilter;
 
               return (
@@ -40,7 +40,7 @@ export function PillarsSection() {
                       ? "border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary-strong)]"
                       : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)] active:border-[var(--color-primary)]",
                   )}
-                  key={filter}
+                  key={`${filter}-${index}`}
                   onClick={() => setActiveFilter(filter)}
                   type="button"
                 >
@@ -81,8 +81,8 @@ export function PillarsSection() {
                   </div>
                   <div className="space-y-[var(--space-5)]">
                     <ul className="flex flex-wrap gap-[var(--space-2)]">
-                      {focusAreas.map((item) => (
-                        <li key={item}>
+                      {focusAreas.map((item, focusIndex) => (
+                        <li key={`${item}-${focusIndex}`}>
                           <Badge>{item}</Badge>
                         </li>
                       ))}

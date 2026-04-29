@@ -11,6 +11,7 @@ import {
   VIDEO_URL_VALIDATION_ERROR,
   isValidImageUrl,
   isValidVideoUrl,
+  normalizeMediaUrl,
 } from "@/lib/validateImage";
 import { Edit2, Plus, Trash2, Upload, Video, X } from "lucide-react";
 
@@ -49,9 +50,6 @@ type FieldErrors = Partial<
   >
 >;
 
-const TITLE_REQUIRED_ERROR = "Title is required";
-const DESCRIPTION_REQUIRED_ERROR = "Description is required";
-const DATE_REQUIRED_ERROR = "Date is required";
 const FRONTEND_SYNC_ERROR = "Data not synced with frontend";
 
 function createEmptyConference(): ConferenceFormValues {
@@ -148,9 +146,6 @@ function formatSize(sizeInBytes: number) {
   return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function validateFormValues(_values: ConferenceFormValues) {
-  return {};
-}
 
 export function ConferencesManager({ initialData }: { initialData: Conference[] }) {
   const [conferences, setConferences] = useState(initialData);
@@ -168,6 +163,7 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
   const [isDragActive, setIsDragActive] = useState(false);
 
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
+  const pendingMediaRef = useRef<PendingMedia[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -202,10 +198,14 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
   }, []);
 
   useEffect(() => {
-    return () => {
-      pendingMedia.forEach((item) => URL.revokeObjectURL(item.previewUrl));
-    };
+    pendingMediaRef.current = pendingMedia;
   }, [pendingMedia]);
+
+  useEffect(() => {
+    return () => {
+      pendingMediaRef.current.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+    };
+  }, []);
 
   const sortedConferences = useMemo(
     () => [...conferences].sort((left, right) => right.createdAt.localeCompare(left.createdAt)),
@@ -292,7 +292,7 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
     }
 
     const additions = allowed.map((file) => ({
-      id: `${file.name}-${file.size}-${crypto.randomUUID()}`,
+      id: `${file.name}-${file.size}-${globalThis.crypto?.randomUUID?.() ?? Date.now().toString(36)}`,
       file,
       previewUrl: URL.createObjectURL(file),
       type: file.type.startsWith("image/") ? "image" : "video",
@@ -321,7 +321,7 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
       body: requestData,
     });
 
-    const payload = await response.json();
+    const payload = await response.json().catch(() => ({ error: "Upload failed" }));
 
     if (!response.ok) {
       throw new Error(payload.error || "Upload failed");
@@ -389,19 +389,57 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
   }
 
   function addManualAsset(listKey: "images" | "videos", value: string) {
-    const trimmed = value.trim();
+    const trimmed = normalizeMediaUrl(value);
 
     if (!trimmed) {
       return false;
     }
 
+    if (listKey === "images" && !isValidImageUrl(trimmed)) {
+      setFieldErrors((current) => ({ ...current, manualImage: "Invalid image URL" }));
+      setStatus({ kind: "error", message: IMAGE_URL_VALIDATION_ERROR });
+      return false;
+    }
+
+    if (listKey === "videos" && !isValidVideoUrl(trimmed)) {
+      setFieldErrors((current) => ({ ...current, manualVideo: "Invalid video URL" }));
+      setStatus({ kind: "error", message: VIDEO_URL_VALIDATION_ERROR });
+      return false;
+    }
+
     updateForm(listKey, Array.from(new Set([...formValues[listKey], trimmed])));
+    setStatus(null);
     return true;
   }
 
+  function validateForm(values: ConferenceFormValues) {
+    const nextErrors: FieldErrors = {};
+
+    if (!values.title.ar.trim() && !values.title.en.trim()) {
+      nextErrors.titleAr = "Title is required";
+      nextErrors.titleEn = "Title is required";
+    }
+
+    if (!values.description.ar.trim() && !values.description.en.trim()) {
+      nextErrors.descriptionAr = "Description is required";
+      nextErrors.descriptionEn = "Description is required";
+    }
+
+    if (!values.date.trim()) {
+      nextErrors.date = "Date is required";
+    }
+
+    return nextErrors;
+  }
+
   async function handleSubmit() {
-    const nextErrors = validateFormValues(formValues);
+    const nextErrors = validateForm(formValues);
     setFieldErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      setStatus({ kind: "error", message: Object.values(nextErrors)[0] ?? "Please complete required fields" });
+      return;
+    }
 
     setLoading(true);
     setStatus(null);
@@ -424,7 +462,7 @@ export function ConferencesManager({ initialData }: { initialData: Conference[] 
       },
     );
 
-    const payload = await response.json();
+    const payload = await response.json().catch(() => ({ error: "Failed to save conference" }));
 
     if (!response.ok) {
       setLoading(false);

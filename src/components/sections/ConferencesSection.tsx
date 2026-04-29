@@ -32,7 +32,13 @@ export function ConferencesSection({ conferences }: { conferences: Conference[] 
     return [
       allLabel,
       ...Array.from(categories.entries())
-        .sort((left, right) => left[1].localeCompare(right[1], locale))
+        .sort((left, right) => {
+          try {
+            return left[1].localeCompare(right[1], locale);
+          } catch {
+            return left[1].localeCompare(right[1]);
+          }
+        })
         .map(([, label]) => label),
     ];
   }, [allLabel, conferences, locale]);

@@ -1,22 +1,28 @@
 "use server";
 
 import prisma from "@/lib/db";
-import { IMAGE_URL_VALIDATION_ERROR, sanitizeImageUrls } from "@/lib/validateImage";
+import { sanitizeImageUrls } from "@/lib/validateImage";
 import { revalidatePath } from "next/cache";
+import { requireAuth } from "@/lib/auth";
 
 export async function deleteResearch(id: string) {
+  await requireAuth();
+
   try {
     await prisma.researchArticle.delete({ where: { id } });
     revalidatePath("/dashboard/research");
     revalidatePath("/research");
     revalidatePath("/");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("Delete research error:", error);
     return { error: "فشل الحذف" };
   }
 }
 
 export async function saveResearch(formData: FormData) {
+  await requireAuth();
+
   try {
     const id = formData.get("id") as string;
     const title = formData.get("title") as string;
@@ -26,6 +32,7 @@ export async function saveResearch(formData: FormData) {
     const publishDate = formData.get("publishDate") as string;
     const category = formData.get("category") as string;
     const images = formData.get("images") as string;
+    
     const imageList = images
       ? images
         .split(",")
@@ -54,7 +61,9 @@ export async function saveResearch(formData: FormData) {
     revalidatePath("/research");
     revalidatePath("/");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("Save research error:", error);
     return { error: "حدث خطأ أثناء الحفظ" };
   }
 }
+

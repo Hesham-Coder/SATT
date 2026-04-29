@@ -9,7 +9,7 @@ function parseTrustedDomains() {
   const rawValue =
     process.env.NEXT_PUBLIC_TRUSTED_IMAGE_DOMAINS || process.env.TRUSTED_IMAGE_DOMAINS || "";
 
-  const defaults = ["localhost", "127.0.0.1"];
+  const defaults = ["localhost", "127.0.0.1", "images.unsplash.com", "**.fbcdn.net"];
   const parsed = rawValue
     .split(",")
     .map((value) => value.trim().toLowerCase())
@@ -24,9 +24,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
-  experimental: {
-    optimizePackageImports: ["lucide-react"],
-  },
   allowedDevOrigins: ["127.0.0.1", "localhost"],
   images: {
     formats: ["image/avif", "image/webp"],

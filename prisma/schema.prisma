@@ -92,5 +92,23 @@ model SiteSettings {
   aboutText   String
   aboutTextAr String?
   aboutTextEn String?
+  showDoctorsSection Boolean @default(true)
   updatedAt   DateTime @updatedAt
+}
+
+model Doctor {
+  id        String   @id @default(cuid())
+  name      String
+  nameAr    String?
+  nameEn    String?
+  role      String
+  roleAr    String?
+  roleEn    String?
+  focus     String
+  focusAr   String?
+  focusEn   String?
+  image     String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -16,6 +16,10 @@ function getLocale(request: NextRequest) {
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const pathnameLocale = locales.find(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
+  );
+  const resolvedLocale = pathnameLocale ?? getLocale(request);
   
   const isDashboard = pathname.includes('/dashboard');
   if (isDashboard) {
@@ -27,33 +31,37 @@ export async function middleware(request: NextRequest) {
         try {
           const valid = await hasValidSessionToken(sessionCookie);
           if (valid) {
-            return NextResponse.redirect(new URL(`/${getLocale(request)}/dashboard`, request.url));
+            return NextResponse.redirect(new URL(`/${resolvedLocale}/dashboard`, request.url));
           }
         } catch {}
       }
     } else {
       if (!sessionCookie) {
-        return NextResponse.redirect(new URL(`/${getLocale(request)}/dashboard/login`, request.url));
+        return NextResponse.redirect(new URL(`/${resolvedLocale}/dashboard/login`, request.url));
       }
       try {
         const valid = await hasValidSessionToken(sessionCookie);
         if (!valid) throw new Error('Invalid');
       } catch {
-        return NextResponse.redirect(new URL(`/${getLocale(request)}/dashboard/login`, request.url));
+        return NextResponse.redirect(new URL(`/${resolvedLocale}/dashboard/login`, request.url));
       }
     }
   }
 
   // Locale routing
-  const pathnameHasLocale = locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-satt-locale", resolvedLocale);
 
-  if (pathnameHasLocale) return NextResponse.next();
+  if (pathnameLocale) {
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
 
   // Redirect if there is no locale
-  const locale = getLocale(request);
-  request.nextUrl.pathname = `/${locale}${pathname === '/' ? '' : pathname}`;
+  request.nextUrl.pathname = `/${resolvedLocale}${pathname === '/' ? '' : pathname}`;
   const response = NextResponse.redirect(request.nextUrl);
   
   return response;

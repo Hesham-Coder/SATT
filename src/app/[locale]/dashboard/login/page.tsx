@@ -6,10 +6,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
+import { useTranslations } from "@/i18n/provider";
+
 export default function LoginPage() {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const { locale } = useTranslations();
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
@@ -21,9 +24,10 @@ export default function LoginPage() {
       setError(result.error);
       setLoading(false);
     } else if (result.success) {
-      router.push("/dashboard");
+      router.push(`/${locale}/dashboard`);
     }
   }
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--color-surface-muted)]" dir="rtl">

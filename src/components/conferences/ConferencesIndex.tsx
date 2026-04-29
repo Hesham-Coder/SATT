@@ -29,7 +29,16 @@ export function ConferencesIndex({ conferences }: { conferences: Conference[] })
       values.add(getConferenceCategoryLabel(conference, locale));
     });
 
-    return [allCategoriesLabel, ...Array.from(values).sort((left, right) => left.localeCompare(right, locale))];
+    return [
+      allCategoriesLabel,
+      ...Array.from(values).sort((left, right) => {
+        try {
+          return left.localeCompare(right, locale);
+        } catch {
+          return left.localeCompare(right);
+        }
+      }),
+    ];
   }, [allCategoriesLabel, conferences, locale]);
 
   const tags = useMemo(() => {
@@ -39,7 +48,16 @@ export function ConferencesIndex({ conferences }: { conferences: Conference[] })
       getConferenceTags(conference, locale).forEach((tag) => values.add(tag));
     });
 
-    return [allTagsLabel, ...Array.from(values).sort((left, right) => left.localeCompare(right, locale))];
+    return [
+      allTagsLabel,
+      ...Array.from(values).sort((left, right) => {
+        try {
+          return left.localeCompare(right, locale);
+        } catch {
+          return left.localeCompare(right);
+        }
+      }),
+    ];
   }, [allTagsLabel, conferences, locale]);
 
   useEffect(() => {

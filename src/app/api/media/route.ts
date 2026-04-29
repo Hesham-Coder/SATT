@@ -6,6 +6,12 @@ import { listMediaFiles, saveUploadedFile } from "@/lib/media";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const session = await getSession();
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const files = await listMediaFiles();
 
@@ -18,6 +24,7 @@ export async function GET() {
     return NextResponse.json({ images: [], videos: [] });
   }
 }
+
 
 export async function POST(request: Request) {
   const session = await getSession();

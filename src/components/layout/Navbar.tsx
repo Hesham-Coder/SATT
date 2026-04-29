@@ -53,6 +53,12 @@ const drawerItems = [
     label: { ar: "الأبحاث", en: "Research" },
     highlighted: false,
   },
+  {
+    sectionId: "dashboard",
+    href: "/dashboard",
+    label: { ar: "لوحة التحكم", en: "Dashboard" },
+    highlighted: false,
+  },
 ] as const;
 
 export function Navbar() {
