@@ -3,8 +3,8 @@
 import { MessageCircle, PhoneCall } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-const PHONE_NUMBER = "+201000000000";
-const WHATSAPP_NUMBER = "201000000000";
+const PHONE_NUMBER = "+01223399328";
+const WHATSAPP_NUMBER = "01223399328";
 
 function isDashboardPath(pathname: string) {
   return pathname.startsWith("/dashboard") || pathname.startsWith("/api");

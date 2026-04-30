@@ -70,13 +70,13 @@ export function ContactSection() {
             <div className="grid gap-[var(--space-3)] sm:grid-cols-2">
               <a
                 className="inline-flex min-h-[var(--control-height-md)] items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-[var(--space-4)] text-[length:var(--font-size-sm)] font-[var(--font-weight-semibold)] text-[var(--color-text-inverse)] transition-transform hover:scale-[1.05] active:scale-[0.98]"
-                href="tel:+201000000000"
+                href="tel:+01223399328"
               >
                 {t("directCall") as string}
               </a>
               <a
                 className="inline-flex min-h-[var(--control-height-md)] items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-[var(--space-4)] text-[length:var(--font-size-sm)] font-[var(--font-weight-semibold)] text-[var(--color-text-primary)] transition-transform hover:scale-[1.05] active:scale-[0.98]"
-                href="https://wa.me/201000000000"
+                href="https://wa.me/01223399328"
                 rel="noreferrer"
                 target="_blank"
               >
